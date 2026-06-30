@@ -1,84 +1,35 @@
-"use client";
-
-import { useState } from "react";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
-import Card from "@/components/Card";
+import SearchBar from "@/components/SearchBar";
+import FeaturedStays from "@/components/FeaturedStays";
+import WhyChooseUs from "@/components/WhyChooseUs";
+import Testimonials from "@/components/Testimonials";
 import Footer from "@/components/Footer";
 
-export default function Home() {
-  const [darkMode, setDarkMode] = useState(false);
-
+export default function HomePage() {
   return (
-    <div
-      className={
-        darkMode
-          ? "bg-black text-white min-h-screen"
-          : "bg-white text-black min-h-screen"
-      }
-    >
+    <div className="min-h-screen bg-gradient-to-b from-green-50 via-white to-white dark:from-gray-950 dark:via-gray-950 dark:to-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-300">
       <Navbar />
 
-      <div className="p-4">
-        <button
-          onClick={() => setDarkMode(!darkMode)}
-          className="border px-4 py-2 rounded-lg"
-        >
-          {darkMode ? "☀️ Light Mode" : "🌙 Dark Mode"}
-        </button>
-      </div>
-
       <main>
-        <section
-          className={`py-16 px-4 ${
-            darkMode ? "bg-gray-900" : "bg-gray-100"
-          }`}
-        >
-          <div className="max-w-5xl mx-auto text-center">
-            <h1 className="text-5xl font-bold mb-4">
-              Find Your Perfect Homestay
-            </h1>
-
-            <p
-              className={`text-lg ${
-                darkMode ? "text-gray-300" : "text-gray-600"
-              }`}
-            >
-              Explore comfortable and affordable homestays across different
-              destinations with smart recommendations.
-            </p>
-
-            <button className="mt-6 bg-black text-white px-6 py-3 rounded-lg">
-              Explore Stays
-            </button>
-          </div>
+        <section className="py-20 max-w-7xl mx-auto px-6">
+          <Hero />
         </section>
 
-        <section className="max-w-5xl mx-auto px-4 py-8">
-          <input
-            type="text"
-            placeholder="Search destination..."
-            className={`w-full border rounded-lg p-3 ${
-              darkMode
-                ? "bg-gray-800 text-white"
-                : "bg-white text-black"
-            }`}
-          />
+        <section className="py-20 max-w-7xl mx-auto px-6">
+          <SearchBar />
         </section>
 
-        <section className="max-w-6xl mx-auto px-4 py-10">
-          <h2 className="text-3xl font-bold mb-6">
-            Featured Homestays
-          </h2>
+        <section className="py-20 max-w-7xl mx-auto px-6">
+          <FeaturedStays />
+        </section>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <Card />
-            <Card />
-            <Card />
-            <Card />
-            <Card />
-            <Card />
-          </div>
+        <section className="py-20 max-w-7xl mx-auto px-6">
+          <WhyChooseUs />
+        </section>
+
+        <section className="py-20 max-w-7xl mx-auto px-6">
+          <Testimonials />
         </section>
       </main>
 
