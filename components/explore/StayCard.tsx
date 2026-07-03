@@ -6,6 +6,7 @@ import { Car, Coffee, Heart, MapPin, Star, Wifi } from "lucide-react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Stay } from "./types";
+import OptimizedImage from "./OptimizedImage";
 
 const amenityIcons: Record<string, typeof Wifi> = {
   wifi: Wifi,
@@ -35,12 +36,14 @@ export default function StayCard({
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.05, duration: 0.3 }}
-      className="group overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl hover:shadow-emerald-900/10 dark:border-gray-800 dark:bg-gray-900"
+      className="group overflow-hidden rounded-2xl border border-border bg-card shadow-sm transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl hover:shadow-emerald-900/10"
     >
       <div className="relative h-56 overflow-hidden">
-        <img
+        <OptimizedImage
           src={stay.image}
           alt={stay.title}
+          width={400}
+          height={300}
           className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
         />
 
@@ -78,7 +81,7 @@ export default function StayCard({
       <div className="space-y-3 p-5">
         <div>
           <div className="flex items-start justify-between gap-2">
-            <h3 className="font-bold text-gray-900 leading-snug transition-colors group-hover:text-emerald-700 dark:text-white dark:group-hover:text-emerald-400">
+            <h3 className="font-bold text-foreground leading-snug transition-colors group-hover:text-primary dark:text-white dark:group-hover:text-emerald-400">
               {stay.title}
             </h3>
             <span className="shrink-0 inline-flex items-center gap-1 rounded-full bg-amber-50 px-2 py-0.5 text-xs font-bold text-amber-700 dark:bg-amber-950/40 dark:text-amber-400">
@@ -86,7 +89,7 @@ export default function StayCard({
               {stay.rating}
             </span>
           </div>
-          <p className="mt-1.5 flex items-center gap-1 text-sm text-gray-500 dark:text-gray-400">
+          <p className="mt-1.5 flex items-center gap-1 text-sm text-muted-foreground">
             <MapPin className="h-3.5 w-3.5 shrink-0" strokeWidth={2} />
             {stay.location}
           </p>
@@ -99,7 +102,7 @@ export default function StayCard({
             const Icon = amenityIcons[amenity];
             if (!Icon) return null;
             return (
-              <span key={amenity} className="inline-flex items-center gap-1 rounded-lg bg-gray-50 px-2.5 py-1 text-xs font-medium capitalize text-gray-600 dark:bg-gray-800 dark:text-gray-400">
+              <span key={amenity} className="inline-flex items-center gap-1 rounded-lg bg-secondary px-2.5 py-1 text-xs font-medium capitalize text-muted-foreground">
                 <Icon className="h-3.5 w-3.5" strokeWidth={2} />
                 {amenity}
               </span>
@@ -109,7 +112,7 @@ export default function StayCard({
 
         <Link
           href={`/explore?stay=${stay.id}`}
-          className="block w-full rounded-xl bg-gradient-to-r from-emerald-600 to-teal-500 py-2.5 text-center text-sm font-bold text-white shadow-md transition-all duration-300 hover:shadow-lg hover:scale-[1.01]"
+          className="block w-full rounded-xl bg-gradient-primary py-2.5 text-center text-sm font-bold text-white shadow-md transition-all duration-300 hover:shadow-lg hover:scale-[1.01]"
         >
           Book Now
         </Link>

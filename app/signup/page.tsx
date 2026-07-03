@@ -72,8 +72,8 @@ export default function SignupPage() {
         </div>
 
         <div className="space-y-3">
-          <button type="button" className="flex w-full items-center justify-center gap-2 rounded-xl border border-gray-200 py-3 text-sm font-medium dark:border-gray-700 dark:hover:bg-gray-800"><Globe className="h-4 w-4" /> Google</button>
-          <button type="button" className="flex w-full items-center justify-center gap-2 rounded-xl border border-gray-200 py-3 text-sm font-medium dark:border-gray-700 dark:hover:bg-gray-800"><GitFork className="h-4 w-4" /> GitHub</button>
+          <button type="button" onClick={() => alert('Google OAuth requires Supabase credentials. Please configure NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY in .env')} className="flex w-full items-center justify-center gap-2 rounded-xl border border-gray-200 py-3 text-sm font-medium dark:border-gray-700 dark:hover:bg-gray-800"><Globe className="h-4 w-4" /> Google</button>
+          <button type="button" onClick={() => alert('GitHub OAuth requires configuration. This feature is coming soon.')} className="flex w-full items-center justify-center gap-2 rounded-xl border border-gray-200 py-3 text-sm font-medium dark:border-gray-700 dark:hover:bg-gray-800"><GitFork className="h-4 w-4" /> GitHub</button>
         </div>
       </div>
     </AuthLayout>

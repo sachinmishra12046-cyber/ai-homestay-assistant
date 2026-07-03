@@ -1,2 +1,19 @@
+# Dependencies
 node_modules
 .next
+
+# Generated
+/lib/generated/prisma
+
+# Environment files
+.env
+.env.local
+.env.*
+backend/.env
+
+# OS files
+.DS_Store
+
+# Build
+dist
+coverage

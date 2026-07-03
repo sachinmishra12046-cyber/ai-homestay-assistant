@@ -3,6 +3,7 @@
 import { ThemeProvider } from "@/context/ThemeProvider";
 import { WishlistProvider } from "@/context/WishlistProvider";
 import { AuthProvider } from "@/context/AuthProvider";
+import { NotificationProvider } from "@/context/NotificationProvider";
 import ChatWidget from "@/components/ChatWidget";
 
 export default function AppProviders({
@@ -13,10 +14,12 @@ export default function AppProviders({
   return (
     <ThemeProvider>
       <AuthProvider>
-        <WishlistProvider>
-          {children}
-          <ChatWidget />
-        </WishlistProvider>
+        <NotificationProvider>
+          <WishlistProvider>
+            {children}
+            <ChatWidget />
+          </WishlistProvider>
+        </NotificationProvider>
       </AuthProvider>
     </ThemeProvider>
   );

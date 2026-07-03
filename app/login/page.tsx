@@ -40,7 +40,8 @@ export default function LoginPage() {
       await login(email, password);
       router.push("/dashboard");
     } catch (error) {
-      setErrors({ email: "Login failed. Please try again." });
+      const errorMessage = error instanceof Error ? error.message : 'Login failed. Please try again.';
+      setErrors({ email: errorMessage });
     } finally {
       setIsLoading(false);
     }
@@ -81,10 +82,10 @@ export default function LoginPage() {
         </div>
 
         <div className="space-y-3">
-          <button type="button" className="flex w-full items-center justify-center gap-2 rounded-xl border border-gray-200 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800 transition-colors">
+          <button type="button" onClick={() => alert('Google OAuth requires Supabase credentials. Please configure NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY in .env')} className="flex w-full items-center justify-center gap-2 rounded-xl border border-gray-200 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800 transition-colors">
             <Globe className="h-4 w-4" /> Continue with Google
           </button>
-          <button type="button" className="flex w-full items-center justify-center gap-2 rounded-xl border border-gray-200 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800 transition-colors">
+          <button type="button" onClick={() => alert('GitHub OAuth requires configuration. This feature is coming soon.')} className="flex w-full items-center justify-center gap-2 rounded-xl border border-gray-200 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800 transition-colors">
             <GitFork className="h-4 w-4" /> Continue with GitHub
           </button>
         </div>

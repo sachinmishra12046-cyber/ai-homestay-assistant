@@ -1,0 +1,134 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_DATABASE_URL")
+}
+enum UserRole {
+  USER
+  ADMIN
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  COMPLETED
+}
+
+model User {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  password  String
+  phone     String?
+  avatar    String?
+  role      UserRole @default(USER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  bookings   Booking[]
+  properties Property[]
+  reviews    Review[]
+  wishlist   Wishlist[]
+
+  @@index([email])
+}
+
+model Property {
+  id           String   @id @default(cuid())
+  title        String
+  description  String
+  city         String
+  country      String
+  address      String
+  pricePerNight Int
+  bedrooms     Int
+  bathrooms    Int
+  guests       Int
+  images       String[]
+  amenities    String[]
+  rating       Float    @default(0)
+  hostId       String
+  category     String?
+  aiTags       String[]
+  ecoScore     Int      @default(0)
+  latitude     Float?
+  longitude    Float?
+  isSuperhost  Boolean  @default(false)
+  isInstantBook Boolean @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // Relations
+  host     User      @relation(fields: [hostId], references: [id], onDelete: Cascade)
+  bookings Booking[]
+  reviews  Review[]
+  wishlist Wishlist[]
+
+  @@index([hostId])
+  @@index([city])
+  @@index([rating])
+  @@index([category])
+  @@index([ecoScore])
+}
+
+model Booking {
+  id         String        @id @default(cuid())
+  userId     String
+  propertyId String
+  checkIn    DateTime
+  checkOut   DateTime
+  totalPrice Int
+  status     BookingStatus @default(PENDING)
+  createdAt  DateTime      @default(now())
+
+  // Relations
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  property Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, propertyId, checkIn])
+  @@index([userId])
+  @@index([propertyId])
+  @@index([status])
+}
+
+model Wishlist {
+  id         String   @id @default(cuid())
+  userId     String
+  propertyId String
+  createdAt  DateTime @default(now())
+
+  // Relations
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  property Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, propertyId])
+  @@index([userId])
+  @@index([propertyId])
+}
+
+model Review {
+  id         String   @id @default(cuid())
+  userId     String
+  propertyId String
+  rating     Int
+  comment    String
+  createdAt  DateTime @default(now())
+
+  // Relations
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  property Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, propertyId])
+  @@index([userId])
+  @@index([propertyId])
+  @@index([rating])
+}

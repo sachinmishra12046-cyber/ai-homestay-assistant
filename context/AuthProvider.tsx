@@ -1,81 +1,90 @@
 "use client";
 
-import { STORAGE_KEYS } from "@/lib/constants";
-import { useLocalStorage } from "@/hooks/useLocalStorage";
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useMemo,
-} from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 
 interface User {
   id: string;
   name: string;
   email: string;
   avatar?: string;
+  role: "USER" | "ADMIN";
 }
 
 interface AuthContextValue {
   user: User | null;
   isAuthenticated: boolean;
+  isLoading: boolean;
   login: (email: string, password: string) => Promise<void>;
   signup: (name: string, email: string, password: string) => Promise<void>;
-  logout: () => void;
-  isHydrated: boolean;
+  logout: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser, isHydrated] = useLocalStorage<User | null>(
-    STORAGE_KEYS.auth,
-    null
-  );
+  const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const login = useCallback(
-    async (email: string, password: string) => {
-      // Simulate API call with local authentication
-      // In production, this would call your backend API
-      const mockUser: User = {
-        id: "1",
-        name: email.split("@")[0],
-        email,
-        avatar: email[0].toUpperCase(),
-      };
-      setUser(mockUser);
-    },
-    [setUser]
-  );
+  useEffect(() => {
+    // Check session on mount
+    fetch("/api/auth/me")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.user) {
+          setUser(data.user);
+        }
+      })
+      .catch(console.error)
+      .finally(() => setIsLoading(false));
+  }, []);
 
-  const signup = useCallback(
-    async (name: string, email: string, password: string) => {
-      // Simulate API call with local authentication
-      const mockUser: User = {
-        id: Date.now().toString(),
-        name,
-        email,
-        avatar: name[0].toUpperCase(),
-      };
-      setUser(mockUser);
-    },
-    [setUser]
-  );
+  const login = useCallback(async (email: string, password: string) => {
+    const res = await fetch("/api/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    });
 
-  const logout = useCallback(() => {
+    if (!res.ok) {
+      const data = await res.json();
+      throw new Error(data.error || "Login failed");
+    }
+
+    const data = await res.json();
+    setUser(data.user);
+  }, []);
+
+  const signup = useCallback(async (name: string, email: string, password: string) => {
+    const res = await fetch("/api/auth/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, email, password }),
+    });
+
+    if (!res.ok) {
+      const data = await res.json();
+      throw new Error(data.error || "Registration failed");
+    }
+
+    const data = await res.json();
+    setUser(data.user);
+  }, []);
+
+  const logout = useCallback(async () => {
+    await fetch("/api/auth/logout", { method: "POST" });
     setUser(null);
-  }, [setUser]);
+  }, []);
 
   const value = useMemo(
     () => ({
       user,
       isAuthenticated: !!user,
+      isLoading,
       login,
       signup,
       logout,
-      isHydrated,
     }),
-    [user, login, signup, logout, isHydrated]
+    [user, isLoading, login, signup, logout]
   );
 
   return (
