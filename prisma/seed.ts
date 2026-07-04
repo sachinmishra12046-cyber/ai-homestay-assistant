@@ -1318,7 +1318,7 @@ async function main() {
     'Adventure activities nearby were amazing. Had a blast!',
   ]
 
-  for (let i = 0; i < 100; i++) {
+  for (let i = 0; i < 50; i++) {
     const review = await prisma.review.create({
       data: {
         userId: users[i % 10].id,
