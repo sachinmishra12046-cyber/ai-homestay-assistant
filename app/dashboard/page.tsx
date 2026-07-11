@@ -181,7 +181,7 @@ export default function DashboardPage() {
   }
 
   return (
-    <>
+    <div>
       <Navbar />
 
       <div className="min-h-screen bg-background">
@@ -480,6 +480,7 @@ export default function DashboardPage() {
         </div>
       </div>
     </div>
-    </>
+    </div>
+    </div>
   );
 }

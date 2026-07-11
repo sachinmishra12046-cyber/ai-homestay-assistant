@@ -1257,12 +1257,64 @@ export default function ExplorePage() {
   const [isTyping, setIsTyping] = useState(false);
   const debouncedSearch = useDebounce(search, 300);
 
-  // Simulate loading
+  // Fetch properties from database
   useEffect(() => {
-    setTimeout(() => {
-      setStays(demoProperties);
-      setLoading(false);
-    }, 1000);
+    async function fetchProperties() {
+      try {
+        const response = await fetch('/api/properties');
+        const data = await response.json();
+        
+        if (response.ok) {
+          // API returns { properties: [...], pagination: {...} }
+          const properties = data.properties || [];
+          
+          // Transform API data to match Stay interface
+          const transformedStays = properties.map((property: any) => ({
+            id: property.id,
+            title: property.title,
+            description: property.description,
+            price: property.pricePerNight,
+            rating: property.rating || property.averageRating || 0,
+            reviewCount: property._count?.reviews || 0,
+            image: property.images?.[0] || '',
+            images: property.images || [],
+            location: property.city,
+            category: property.category,
+            amenities: property.amenities || [],
+            isSuperhost: property.isSuperhost || false,
+            isInstantBook: property.isInstantBook || false,
+            aiMatch: Math.floor(Math.random() * 20) + 80, // Mock AI match score
+            ecoScore: property.ecoScore || 0,
+            latitude: property.latitude || 0,
+            longitude: property.longitude || 0,
+            aiTags: property.aiTags || [],
+            host: { 
+              name: property.host?.name || 'Host', 
+              photo: property.host?.avatar || '', 
+              verified: true 
+            },
+            bedrooms: property.bedrooms || 0,
+            bathrooms: property.bathrooms || 0,
+            guests: property.guests || 0,
+            discount: 0,
+            distance: 0
+          }));
+          setStays(transformedStays);
+        } else {
+          console.error('Failed to fetch properties:', data.error);
+          // Fallback to demo properties if API fails
+          setStays(demoProperties);
+        }
+      } catch (error) {
+        console.error('Error fetching properties:', error);
+        // Fallback to demo properties if fetch fails
+        setStays(demoProperties);
+      } finally {
+        setLoading(false);
+      }
+    }
+    
+    fetchProperties();
   }, []);
 
   const filteredStays = useMemo(

@@ -1,18 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { withAuth } from '@/lib/apiAuth';
 
 export async function GET(req: NextRequest) {
+  // Verify NextAuth session
+  const authResult = await withAuth(req);
+  if (authResult instanceof NextResponse) return authResult;
+
+  const { userId } = authResult;
+
   try {
-    const searchParams = req.nextUrl.searchParams;
-    const userId = searchParams.get('userId');
-
-    if (!userId) {
-      return NextResponse.json(
-        { error: 'User ID required' },
-        { status: 400 }
-      );
-    }
-
     const wishlist = await prisma.wishlist.findMany({
       where: { userId },
       include: {
@@ -41,11 +38,17 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
+  // Verify NextAuth session
+  const authResult = await withAuth(req);
+  if (authResult instanceof NextResponse) return authResult;
+
+  const { userId } = authResult;
+
   try {
     const body = await req.json();
-    const { userId, propertyId } = body;
+    const { propertyId } = body;
 
-    if (!userId || !propertyId) {
+    if (!propertyId) {
       return NextResponse.json(
         { error: 'Missing required fields' },
         { status: 400 }
@@ -84,12 +87,17 @@ export async function POST(req: NextRequest) {
 }
 
 export async function DELETE(req: NextRequest) {
+  // Verify NextAuth session
+  const authResult = await withAuth(req);
+  if (authResult instanceof NextResponse) return authResult;
+
+  const { userId } = authResult;
+
   try {
     const searchParams = req.nextUrl.searchParams;
-    const userId = searchParams.get('userId');
     const propertyId = searchParams.get('propertyId');
 
-    if (!userId || !propertyId) {
+    if (!propertyId) {
       return NextResponse.json(
         { error: 'Missing required parameters' },
         { status: 400 }

@@ -1,13 +1,14 @@
 "use client";
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { useSession, signIn, signOut } from "next-auth/react";
 
 interface User {
   id: string;
   name: string;
   email: string;
-  avatar?: string;
-  role: "USER" | "ADMIN";
+  avatar?: string | null;
+  role?: "USER" | "ADMIN";
 }
 
 interface AuthContextValue {
@@ -22,36 +23,25 @@ interface AuthContextValue {
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
+  const { data: session, status } = useSession();
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Check session on mount
-    fetch("/api/auth/me")
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.user) {
-          setUser(data.user);
-        }
-      })
-      .catch(console.error)
-      .finally(() => setIsLoading(false));
-  }, []);
+    if (status !== "loading") {
+      setIsLoading(false);
+    }
+  }, [status]);
 
   const login = useCallback(async (email: string, password: string) => {
-    const res = await fetch("/api/auth/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
+    const result = await signIn("credentials", {
+      email,
+      password,
+      redirect: false,
     });
 
-    if (!res.ok) {
-      const data = await res.json();
-      throw new Error(data.error || "Login failed");
+    if (result?.error) {
+      throw new Error("Invalid email or password");
     }
-
-    const data = await res.json();
-    setUser(data.user);
   }, []);
 
   const signup = useCallback(async (name: string, email: string, password: string) => {
@@ -66,14 +56,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       throw new Error(data.error || "Registration failed");
     }
 
-    const data = await res.json();
-    setUser(data.user);
+    // Auto-login after registration
+    await signIn("credentials", {
+      email,
+      password,
+      redirect: false,
+    });
   }, []);
 
   const logout = useCallback(async () => {
-    await fetch("/api/auth/logout", { method: "POST" });
-    setUser(null);
+    await signOut({ redirect: false });
   }, []);
+
+  const user: User | null = session?.user ? {
+    id: session.user.id,
+    name: session.user.name,
+    email: session.user.email,
+    avatar: session.user.image,
+  } : null;
 
   const value = useMemo(
     () => ({

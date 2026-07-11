@@ -311,6 +311,32 @@ Summer Internship Project
 
 ---
 
+## 🗄️ Database
+
+### Database Choice
+We chose PostgreSQL (via Supabase) over MongoDB because StayNest's data is highly relational — Users, Properties, Bookings, Reviews, and Wishlist all have clear foreign-key relationships.
+
+### Schema Diagram
+![StayNest Schema Diagram](./docs/W5_SchemaDiagram_TBI-26101269.png)
+
+Entities:
+- User — guest/host accounts, auth info
+- Property — listings created by hosts
+- Booking — links User + Property with dates and status
+- Review — ratings and comments on Properties
+- Wishlist — saved Properties per User
+
+### Set Up the Database
+
+1. Install dependencies:
+```bash
+npm install
+```
+
+2. Create a .env file (reference .env.example):
+
+---
+
 # License
 
 This project is developed for educational and internship purposes.

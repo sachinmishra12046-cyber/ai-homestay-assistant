@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getUserByEmail, verifyPassword } from '@/lib/auth';
+import { getUserByEmail, verifyPassword, generateToken } from '@/lib/auth';
+import { rateLimit } from '@/lib/rateLimit';
 import { z } from 'zod';
 
 const loginSchema = z.object({
@@ -8,6 +9,12 @@ const loginSchema = z.object({
 });
 
 export async function POST(req: NextRequest) {
+  // Apply rate limiting
+  const rateLimitResult = await rateLimit({ maxRequests: 5, windowMs: 15 * 60 * 1000 })(req);
+  if (rateLimitResult) {
+    return rateLimitResult;
+  }
+
   try {
     const body = await req.json();
     const validatedData = loginSchema.parse(body);
@@ -28,22 +35,27 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Create session (simplified - in production use proper JWT or session management)
+    // Generate JWT token
+    const token = generateToken(user.id);
+
     const response = NextResponse.json({
       user: {
         id: user.id,
         email: user.email,
         name: user.name,
         role: user.role,
+        avatar: user.avatar,
       },
+      token,
     });
 
-    // Set session cookie
-    response.cookies.set('session', user.id, {
+    // Set JWT cookie
+    response.cookies.set('token', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
       maxAge: 60 * 60 * 24 * 7, // 7 days
+      path: '/',
     });
 
     return response;

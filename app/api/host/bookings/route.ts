@@ -1,22 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { withAuth } from '@/lib/apiAuth';
 
 export async function GET(req: NextRequest) {
+  // Verify NextAuth session
+  const authResult = await withAuth(req);
+  if (authResult instanceof NextResponse) return authResult;
+
+  const { userId } = authResult;
+
   try {
-    const searchParams = req.nextUrl.searchParams;
-    const hostId = searchParams.get('hostId');
-
-    if (!hostId) {
-      return NextResponse.json(
-        { error: 'Host ID required' },
-        { status: 400 }
-      );
-    }
-
     const bookings = await prisma.booking.findMany({
       where: {
         property: {
-          hostId,
+          hostId: userId,
         },
       },
       include: {

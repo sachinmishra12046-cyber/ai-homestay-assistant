@@ -1,11 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { withAuth } from '@/lib/apiAuth';
 
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  // Verify NextAuth session
+  const authResult = await withAuth(req);
+  if (authResult instanceof NextResponse) return authResult;
+
   try {
+    const { id } = await params;
     const body = await req.json();
     const { status } = body;
 
@@ -17,7 +23,7 @@ export async function PATCH(
     }
 
     const booking = await prisma.booking.update({
-      where: { id: params.id },
+      where: { id },
       data: { status },
     });
 
@@ -33,11 +39,16 @@ export async function PATCH(
 
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  // Verify NextAuth session
+  const authResult = await withAuth(req);
+  if (authResult instanceof NextResponse) return authResult;
+
   try {
+    const { id } = await params;
     await prisma.booking.delete({
-      where: { id: params.id },
+      where: { id },
     });
 
     return NextResponse.json({ message: 'Booking deleted' });

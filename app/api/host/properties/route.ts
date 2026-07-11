@@ -1,20 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { withAuth } from '@/lib/apiAuth';
 
 export async function GET(req: NextRequest) {
+  // Verify NextAuth session
+  const authResult = await withAuth(req);
+  if (authResult instanceof NextResponse) return authResult;
+
+  const { userId } = authResult;
+
   try {
-    const searchParams = req.nextUrl.searchParams;
-    const hostId = searchParams.get('hostId');
-
-    if (!hostId) {
-      return NextResponse.json(
-        { error: 'Host ID required' },
-        { status: 400 }
-      );
-    }
-
     const properties = await prisma.property.findMany({
-      where: { hostId },
+      where: { hostId: userId },
       include: {
         _count: {
           select: {
@@ -37,10 +34,15 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
+  // Verify NextAuth session
+  const authResult = await withAuth(req);
+  if (authResult instanceof NextResponse) return authResult;
+
+  const { userId } = authResult;
+
   try {
     const body = await req.json();
     const {
-      hostId,
       title,
       description,
       city,
@@ -54,7 +56,7 @@ export async function POST(req: NextRequest) {
       amenities,
     } = body;
 
-    if (!hostId || !title || !city || !pricePerNight) {
+    if (!title || !city || !pricePerNight) {
       return NextResponse.json(
         { error: 'Missing required fields' },
         { status: 400 }
@@ -63,7 +65,7 @@ export async function POST(req: NextRequest) {
 
     const property = await prisma.property.create({
       data: {
-        hostId,
+        hostId: userId,
         title,
         description,
         city,

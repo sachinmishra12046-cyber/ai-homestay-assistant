@@ -5,6 +5,7 @@ import { WishlistProvider } from "@/context/WishlistProvider";
 import { AuthProvider } from "@/context/AuthProvider";
 import { NotificationProvider } from "@/context/NotificationProvider";
 import ChatWidget from "@/components/ChatWidget";
+import { SessionProvider } from "next-auth/react";
 
 export default function AppProviders({
   children,
@@ -12,15 +13,17 @@ export default function AppProviders({
   children: React.ReactNode;
 }) {
   return (
-    <ThemeProvider>
-      <AuthProvider>
-        <NotificationProvider>
-          <WishlistProvider>
-            {children}
-            <ChatWidget />
-          </WishlistProvider>
-        </NotificationProvider>
-      </AuthProvider>
-    </ThemeProvider>
+    <SessionProvider>
+      <ThemeProvider>
+        <AuthProvider>
+          <NotificationProvider>
+            <WishlistProvider>
+              {children}
+              <ChatWidget />
+            </WishlistProvider>
+          </NotificationProvider>
+        </AuthProvider>
+      </ThemeProvider>
+    </SessionProvider>
   );
 }

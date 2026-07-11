@@ -6,6 +6,7 @@ import { GitFork, Globe, Lock, Mail, User } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
 import { useAuth } from "@/context/AuthProvider";
+import { signIn } from "next-auth/react";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -16,6 +17,7 @@ export default function SignupPage() {
   const [confirm, setConfirm] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(false);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
 
   const validate = () => {
     const next: Record<string, string> = {};
@@ -35,11 +37,24 @@ export default function SignupPage() {
     setIsLoading(true);
     try {
       await signup(name, email, password);
-      router.push("/profile");
+      router.push("/dashboard");
     } catch (error) {
-      setErrors({ email: "Signup failed. Please try again." });
+      const errorMessage = error instanceof Error ? error.message : "Signup failed. Please try again.";
+      setErrors({ email: errorMessage });
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleGoogleSignIn = async () => {
+    setIsGoogleLoading(true);
+    try {
+      await signIn("google", { callbackUrl: "/dashboard" });
+    } catch (error) {
+      console.error("Google sign-in error:", error);
+      setErrors({ email: "Google sign-in failed. Please try again." });
+    } finally {
+      setIsGoogleLoading(false);
     }
   };
 
@@ -72,8 +87,12 @@ export default function SignupPage() {
         </div>
 
         <div className="space-y-3">
-          <button type="button" onClick={() => alert('Google OAuth requires Supabase credentials. Please configure NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY in .env')} className="flex w-full items-center justify-center gap-2 rounded-xl border border-gray-200 py-3 text-sm font-medium dark:border-gray-700 dark:hover:bg-gray-800"><Globe className="h-4 w-4" /> Google</button>
-          <button type="button" onClick={() => alert('GitHub OAuth requires configuration. This feature is coming soon.')} className="flex w-full items-center justify-center gap-2 rounded-xl border border-gray-200 py-3 text-sm font-medium dark:border-gray-700 dark:hover:bg-gray-800"><GitFork className="h-4 w-4" /> GitHub</button>
+          <button type="button" onClick={handleGoogleSignIn} disabled={isGoogleLoading} className="flex w-full items-center justify-center gap-2 rounded-xl border border-gray-200 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+            <Globe className="h-4 w-4" /> {isGoogleLoading ? "Signing up with Google..." : "Continue with Google"}
+          </button>
+          <button type="button" onClick={() => alert('GitHub OAuth requires configuration. This feature is coming soon.')} className="flex w-full items-center justify-center gap-2 rounded-xl border border-gray-200 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800 transition-colors">
+            <GitFork className="h-4 w-4" /> Continue with GitHub
+          </button>
         </div>
       </div>
     </AuthLayout>

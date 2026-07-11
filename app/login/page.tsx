@@ -9,17 +9,20 @@ import {
   Mail
 } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { FormEvent, useState } from "react";
 import { useAuth } from "@/context/AuthProvider";
+import { signIn } from "next-auth/react";
 
 export default function LoginPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { login } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
   const [isLoading, setIsLoading] = useState(false);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
 
   const validate = () => {
     const next: typeof errors = {};
@@ -38,12 +41,27 @@ export default function LoginPage() {
     setIsLoading(true);
     try {
       await login(email, password);
-      router.push("/dashboard");
+      // Redirect to the page user was trying to access, or dashboard
+      const redirectUrl = searchParams.get('redirect') || '/dashboard';
+      router.push(redirectUrl);
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Login failed. Please try again.';
       setErrors({ email: errorMessage });
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleGoogleSignIn = async () => {
+    setIsGoogleLoading(true);
+    try {
+      const redirectUrl = searchParams.get('redirect') || '/dashboard';
+      await signIn("google", { callbackUrl: redirectUrl });
+    } catch (error) {
+      console.error("Google sign-in error:", error);
+      setErrors({ email: "Google sign-in failed. Please try again." });
+    } finally {
+      setIsGoogleLoading(false);
     }
   };
 
@@ -82,8 +100,8 @@ export default function LoginPage() {
         </div>
 
         <div className="space-y-3">
-          <button type="button" onClick={() => alert('Google OAuth requires Supabase credentials. Please configure NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY in .env')} className="flex w-full items-center justify-center gap-2 rounded-xl border border-gray-200 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800 transition-colors">
-            <Globe className="h-4 w-4" /> Continue with Google
+          <button type="button" onClick={handleGoogleSignIn} disabled={isGoogleLoading} className="flex w-full items-center justify-center gap-2 rounded-xl border border-gray-200 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+            <Globe className="h-4 w-4" /> {isGoogleLoading ? "Signing in with Google..." : "Continue with Google"}
           </button>
           <button type="button" onClick={() => alert('GitHub OAuth requires configuration. This feature is coming soon.')} className="flex w-full items-center justify-center gap-2 rounded-xl border border-gray-200 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800 transition-colors">
             <GitFork className="h-4 w-4" /> Continue with GitHub

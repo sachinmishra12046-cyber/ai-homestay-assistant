@@ -26,11 +26,15 @@ export default function Card({
   onClick,
 }: CardProps) {
   const Component = onClick ? motion.div : "div";
+  const motionProps = onClick && hover ? {
+    whileHover: { y: -4 },
+    transition: { duration: 0.2 },
+  } : {};
 
   return (
     <Component
       onClick={onClick}
-      whileHover={hover ? { y: -4, transition: { duration: 0.2 } } : undefined}
+      {...motionProps}
       className={[
         variantStyles[variant],
         hover ? "cursor-pointer transition-transform" : "",

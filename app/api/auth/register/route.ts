@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createUser, getUserByEmail } from '@/lib/auth';
+import { rateLimit } from '@/lib/rateLimit';
 import { z } from 'zod';
 
 const registerSchema = z.object({
@@ -10,6 +11,12 @@ const registerSchema = z.object({
 });
 
 export async function POST(req: NextRequest) {
+  // Apply rate limiting (5 attempts per 15 minutes)
+  const rateLimitResult = await rateLimit({ maxRequests: 5, windowMs: 15 * 60 * 1000 })(req);
+  if (rateLimitResult) {
+    return rateLimitResult;
+  }
+
   try {
     const body = await req.json();
     const validatedData = registerSchema.parse(body);

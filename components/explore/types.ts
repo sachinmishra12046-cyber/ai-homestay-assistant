@@ -1,5 +1,5 @@
 export interface ApiStay {
-  id: number;
+  id: string;
   title: string;
   location: string;
   price: number;
