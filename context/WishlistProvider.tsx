@@ -31,18 +31,35 @@ export function WishlistProvider({ children }: { children: React.ReactNode }) {
   const [isHydrated, setIsHydrated] = useState(false);
 
   useEffect(() => {
+    // Migrate old number-based wishlist to string-based
+    const item = window.localStorage.getItem(STORAGE_KEYS.wishlist);
+    if (item) {
+      try {
+        const parsed = JSON.parse(item);
+        if (Array.isArray(parsed) && parsed.length > 0 && typeof parsed[0] === 'number') {
+          // Convert numbers to strings
+          const migrated = parsed.map(String);
+          window.localStorage.setItem(STORAGE_KEYS.wishlist, JSON.stringify(migrated));
+          setWishlist(migrated);
+        }
+      } catch (error) {
+        console.log('Error migrating wishlist:', error);
+      }
+    }
     setIsHydrated(true);
-  }, []);
+  }, [setWishlist]);
 
   const toggleWishlist = useCallback(
     (id: string) => {
-      if (wishlist.includes(id)) {
-        setWishlist(wishlist.filter((item: string) => item !== id));
-      } else {
-        setWishlist([...wishlist, id]);
-      }
+      setWishlist((prev) => {
+        if (prev.includes(id)) {
+          return prev.filter((item: string) => item !== id);
+        } else {
+          return [...prev, id];
+        }
+      });
     },
-    [wishlist, setWishlist]
+    [setWishlist]
   );
 
   const isWishlisted = useCallback(

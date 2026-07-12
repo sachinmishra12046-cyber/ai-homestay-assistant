@@ -11,17 +11,21 @@ export function useLocalStorage<T>(key: string, initialValue: T) {
       isFirstRender.current = false
       try {
         const item = window.localStorage.getItem(key)
-        if (item) setStoredValue(JSON.parse(item))
+        if (item) {
+          const parsed = JSON.parse(item) as T
+          setStoredValue(parsed)
+        }
       } catch (error) {
         console.log(error)
       }
     }
   }, [key])
 
-  const setValue = (value: T) => {
+  const setValue = (value: T | ((prev: T) => T)) => {
     try {
-      setStoredValue(value)
-      window.localStorage.setItem(key, JSON.stringify(value))
+      const valueToStore = value instanceof Function ? value(storedValue) : value
+      setStoredValue(valueToStore)
+      window.localStorage.setItem(key, JSON.stringify(valueToStore))
     } catch (error) {
       console.log(error)
     }

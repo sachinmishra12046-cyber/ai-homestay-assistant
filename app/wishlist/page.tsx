@@ -5,7 +5,7 @@ import Footer from "@/components/Footer";
 import StayGrid from "@/components/explore/StayGrid";
 import LoadingSkeleton from "@/components/explore/LoadingSkeleton";
 import { API_BASE, enrichStay } from "@/components/explore/constants";
-import { ApiStay } from "@/components/explore/types";
+import { ApiStay, Stay } from "@/components/explore/types";
 import { useWishlist } from "@/context/WishlistProvider";
 import { motion } from "framer-motion";
 import { Heart } from "lucide-react";
@@ -14,7 +14,7 @@ import { useEffect, useMemo, useState } from "react";
 
 export default function WishlistPage() {
   const { wishlist, toggleWishlist, count, isHydrated } = useWishlist();
-  const [stays, setStays] = useState<ReturnType<typeof enrichStay>[]>([]);
+  const [stays, setStays] = useState<Stay[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
