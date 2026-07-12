@@ -6,13 +6,15 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
+  useState,
 } from "react";
 
 interface WishlistContextValue {
-  wishlist: number[];
-  toggleWishlist: (id: number) => void;
-  isWishlisted: (id: number) => boolean;
+  wishlist: string[];
+  toggleWishlist: (id: string) => void;
+  isWishlisted: (id: string) => boolean;
   count: number;
   isHydrated: boolean;
 }
@@ -22,22 +24,29 @@ const WishlistContext = createContext<WishlistContextValue | undefined>(
 );
 
 export function WishlistProvider({ children }: { children: React.ReactNode }) {
-  const [wishlist, setWishlist, isHydrated] = useLocalStorage<number[]>(
+  const [wishlist, setWishlist] = useLocalStorage<string[]>(
     STORAGE_KEYS.wishlist,
     []
   );
+  const [isHydrated, setIsHydrated] = useState(false);
+
+  useEffect(() => {
+    setIsHydrated(true);
+  }, []);
 
   const toggleWishlist = useCallback(
-    (id: number) => {
-      setWishlist((prev) =>
-        prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
-      );
+    (id: string) => {
+      if (wishlist.includes(id)) {
+        setWishlist(wishlist.filter((item: string) => item !== id));
+      } else {
+        setWishlist([...wishlist, id]);
+      }
     },
-    [setWishlist]
+    [wishlist, setWishlist]
   );
 
   const isWishlisted = useCallback(
-    (id: number) => wishlist.includes(id),
+    (id: string) => wishlist.includes(id),
     [wishlist]
   );
 

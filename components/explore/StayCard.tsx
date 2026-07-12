@@ -17,7 +17,7 @@ const amenityIcons: Record<string, typeof Wifi> = {
 interface StayCardProps {
   stay: Stay;
   isWishlisted: boolean;
-  onToggleWishlist: (id: number) => void;
+  onToggleWishlist: (id: string) => void;
   showAiBadge?: boolean;
   index?: number;
 }

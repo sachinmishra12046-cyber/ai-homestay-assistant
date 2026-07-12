@@ -1,3 +1,5 @@
+"use client";
+
 import { ButtonHTMLAttributes, ReactNode } from "react";
 import { motion, HTMLMotionProps } from "framer-motion";
 

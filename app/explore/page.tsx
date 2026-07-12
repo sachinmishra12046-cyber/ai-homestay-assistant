@@ -27,7 +27,7 @@ function useDebounce<T>(value: T, delay: number): T {
 
 const demoProperties = [
   {
-    id: 1,
+    id: "1",
     title: "Himalayan Pine Retreat",
     description: "Wake up to stunning mountain views in this cozy wooden cabin surrounded by pine forests. Perfect for nature lovers and peace seekers.",
     price: 2500,
@@ -53,7 +53,7 @@ const demoProperties = [
     distance: 0
   },
   {
-    id: 2,
+    id: "2",
     title: "Coastal Bamboo Villa",
     description: "A beautiful bamboo villa just steps from the beach. Enjoy the sound of waves and stunning sunsets from your private terrace.",
     price: 3500,
@@ -79,7 +79,7 @@ const demoProperties = [
     distance: 0
   },
   {
-    id: 3,
+    id: "3",
     title: "Riverside Yoga Cottage",
     description: "Find inner peace at this serene cottage by the Ganges. Includes daily yoga sessions and meditation spaces.",
     price: 1800,
@@ -105,7 +105,7 @@ const demoProperties = [
     distance: 0
   },
   {
-    id: 4,
+    id: "4",
     title: "Coffee Plantation Estate",
     description: "Stay amidst lush coffee plantations in this colonial-style estate. Experience authentic Coorg coffee culture.",
     price: 4200,
@@ -131,7 +131,7 @@ const demoProperties = [
     distance: 0
   },
   {
-    id: 5,
+    id: "5",
     title: "Lake View Palace",
     description: "Experience royal living in this heritage palace overlooking Lake Pichola. Traditional Rajasthani hospitality at its finest.",
     price: 8000,
@@ -157,7 +157,7 @@ const demoProperties = [
     distance: 0
   },
   {
-    id: 6,
+    id: "6",
     title: "Hippie Haven",
     description: "A colorful, bohemian-style cottage in the heart of Kasol. Perfect for backpackers and free spirits.",
     price: 1200,
@@ -183,7 +183,7 @@ const demoProperties = [
     distance: 0
   },
   {
-    id: 7,
+    id: "7",
     title: "Tea Garden Bungalow",
     description: "Wake up to endless tea plantations in this charming bungalow. Perfect for a peaceful getaway in God's Own Country.",
     price: 3200,
@@ -209,7 +209,7 @@ const demoProperties = [
     distance: 0
   },
   {
-    id: 8,
+    id: "8",
     title: "Nilgiri Mountain Lodge",
     description: "A colonial-era lodge with stunning views of the Nilgiri hills. Experience the charm of Ooty's colonial past.",
     price: 3800,
@@ -235,7 +235,7 @@ const demoProperties = [
     distance: 0
   },
   {
-    id: 9,
+    id: "9",
     title: "Apple Orchard Cottage",
     description: "Stay amidst apple orchards with panoramic mountain views. Fresh apples and warm hospitality included.",
     price: 2800,
@@ -261,7 +261,7 @@ const demoProperties = [
     distance: 0
   },
   {
-    id: 10,
+    id: "10",
     title: "Lakefront Villa",
     description: "A beautiful villa right on the shores of Naini Lake. Wake up to stunning lake views every morning.",
     price: 4500,
@@ -287,7 +287,7 @@ const demoProperties = [
     distance: 0
   },
   {
-    id: 11,
+    id: "11",
     title: "Beach Hut Paradise",
     description: "Simple yet charming beach huts just meters from the sand. Perfect for surfers and beach lovers.",
     price: 1500,
@@ -313,7 +313,7 @@ const demoProperties = [
     distance: 0
   },
   {
-    id: 12,
+    id: "12",
     title: "Forest Treehouse",
     description: "An actual treehouse nestled in the Western Ghats. Unique experience for adventure seekers.",
     price: 2200,
@@ -339,7 +339,7 @@ const demoProperties = [
     distance: 0
   },
   {
-    id: 13,
+    id: "13",
     title: "Desert Camp Luxury",
     description: "Glamping in the Thar Desert with all modern amenities. Stargazing and cultural experiences included.",
     price: 5500,
@@ -365,7 +365,7 @@ const demoProperties = [
     distance: 0
   },
   {
-    id: 14,
+    id: "14",
     title: "Backwater Houseboat",
     description: "Traditional Kerala houseboat experience. Cruise through the backwaters in luxury and comfort.",
     price: 6000,
@@ -391,7 +391,7 @@ const demoProperties = [
     distance: 0
   },
   {
-    id: 15,
+    id: "15",
     title: "Valley of Flowers Hut",
     description: "Basic mountain hut near the Valley of Flowers. Perfect for trekkers and nature photographers.",
     price: 1000,
@@ -417,7 +417,7 @@ const demoProperties = [
     distance: 0
   },
   {
-    id: 16,
+    id: "16",
     title: "Heritage Haveli",
     description: "200-year-old restored haveli in the heart of the Pink City. Experience royal Rajasthani living.",
     price: 4800,
@@ -443,7 +443,7 @@ const demoProperties = [
     distance: 0
   },
   {
-    id: 17,
+    id: "17",
     title: "Sunset Point Villa",
     description: "Perfect sunset views from every room. Modern amenities with traditional Kullu architecture.",
     price: 3000,
@@ -469,7 +469,7 @@ const demoProperties = [
     distance: 0
   },
   {
-    id: 18,
+    id: "18",
     title: "Surfer's Den",
     description: "The perfect spot for surfers in India. Located right at one of the best surf breaks in the country.",
     price: 1800,
@@ -495,7 +495,7 @@ const demoProperties = [
     distance: 0
   },
   {
-    id: 19,
+    id: "19",
     title: "Spice Garden Homestay",
     description: "Stay in a working spice plantation. Learn about spices and enjoy fresh, organic meals.",
     price: 2000,
@@ -521,7 +521,7 @@ const demoProperties = [
     distance: 0
   },
   {
-    id: 20,
+    id: "20",
     title: "Monastery View Room",
     description: "Peaceful room with views of ancient monasteries. Experience Tibetan culture and spirituality.",
     price: 1400,
@@ -547,7 +547,7 @@ const demoProperties = [
     distance: 0
   },
   {
-    id: 21,
+    id: "21",
     title: "Auli Ski Resort",
     description: "Premium ski resort with stunning Himalayan views. Perfect for winter sports enthusiasts.",
     price: 6500,
@@ -573,7 +573,7 @@ const demoProperties = [
     distance: 0
   },
   {
-    id: 22,
+    id: "22",
     title: "Darjeeling Tea Estate",
     description: "Colonial bungalow on a working tea estate with views of Kanchenjunga.",
     price: 3800,
@@ -599,7 +599,7 @@ const demoProperties = [
     distance: 0
   },
   {
-    id: 23,
+    id: "23",
     title: "Leh Ladakh Camp",
     description: "Luxury tents in the heart of Ladakh with stunning mountain vistas and clear night skies.",
     price: 4200,
@@ -625,7 +625,7 @@ const demoProperties = [
     distance: 0
   },
   {
-    id: 24,
+    id: "24",
     title: "Spiti Valley Homestay",
     description: "Traditional Spiti home with warm hospitality and breathtaking valley views.",
     price: 1800,
@@ -651,7 +651,7 @@ const demoProperties = [
     distance: 0
   },
   {
-    id: 25,
+    id: "25",
     title: "Mussoorie Cloud Villa",
     description: "Elegant villa above the clouds with panoramic Himalayan views.",
     price: 5200,
@@ -677,7 +677,7 @@ const demoProperties = [
     distance: 0
   },
   {
-    id: 26,
+    id: "26",
     title: "Rishikesh Riverside Camp",
     description: "Luxury camping by the Ganges with rafting and yoga experiences.",
     price: 2500,
@@ -703,7 +703,7 @@ const demoProperties = [
     distance: 0
   },
   {
-    id: 27,
+    id: "27",
     title: "Goa Portuguese Villa",
     description: "Beautiful Portuguese-style villa with private pool and garden.",
     price: 7500,
@@ -729,7 +729,7 @@ const demoProperties = [
     distance: 0
   },
   {
-    id: 28,
+    id: "28",
     title: "Coorg Spice Cottage",
     description: "Cozy cottage surrounded by spice plantations and coffee estates.",
     price: 2400,
@@ -755,7 +755,7 @@ const demoProperties = [
     distance: 0
   },
   {
-    id: 29,
+    id: "29",
     title: "Manali Riverside Camp",
     description: "Glamping by the Beas River with mountain views and bonfire nights.",
     price: 2200,
@@ -781,7 +781,7 @@ const demoProperties = [
     distance: 0
   },
   {
-    id: 30,
+    id: "30",
     title: "Shimla Colonial Bungalow",
     description: "Heritage British-era bungalow with stunning views of the Himalayas.",
     price: 4500,
@@ -837,7 +837,7 @@ const amenityIcons = {
 };
 
 interface Stay {
-  id: number;
+  id: string;
   title: string;
   description: string;
   price: number;
@@ -1270,7 +1270,7 @@ export default function ExplorePage() {
           
           // Transform API data to match Stay interface
           const transformedStays = properties.map((property: any) => ({
-            id: property.id,
+            id: String(property.id),
             title: property.title,
             description: property.description,
             price: property.pricePerNight,

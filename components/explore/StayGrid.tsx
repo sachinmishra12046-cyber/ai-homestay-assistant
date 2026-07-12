@@ -3,8 +3,8 @@ import { Stay } from "./types";
 
 interface StayGridProps {
   stays: Stay[];
-  wishlist: number[];
-  onToggleWishlist: (id: number) => void;
+  wishlist: string[];
+  onToggleWishlist: (id: string) => void;
   showAiBadge?: boolean;
 }
 
