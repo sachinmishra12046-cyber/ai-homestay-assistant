@@ -1,0 +1,4 @@
+name: StayNest Local l
+values:
+  - key: jwt_token
+    value: ''

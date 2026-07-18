@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Script from "next/script";
 import AppProviders from "@/components/providers/AppProviders";
-import AIAssistant from "@/components/AIAssistant";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -45,10 +44,9 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-full font-sans antialiased bg-background text-foreground">
-        <AppProviders>
-          {children}
-          <AIAssistant />
-        </AppProviders>
+          <AppProviders>
+            {children}
+          </AppProviders>
       </body>
     </html>
   );

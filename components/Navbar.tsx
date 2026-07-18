@@ -14,6 +14,7 @@ import { Heart, Menu, X } from "lucide-react";
 const navLinks = [
   { label: "Home", href: "/" },
   { label: "Explore", href: "/explore" },
+  { label: "AI Assistant", href: "/ai-assistant" },
   { label: "About", href: "/about" },
   { label: "Bookings", href: "/bookings" },
 ];

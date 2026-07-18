@@ -1,6 +1,5 @@
 "use client";
 
-import { getMockAiResponse, SUGGESTED_PROMPTS } from "@/lib/mockAi";
 import { AnimatePresence, motion } from "framer-motion";
 import { Bot, MessageCircle, Send, Sparkles, X } from "lucide-react";
 import { FormEvent, useEffect, useRef, useState } from "react";
@@ -23,13 +22,22 @@ export default function ChatWidget() {
     },
   ]);
   const [typing, setTyping] = useState(false);
+  const [streamingContent, setStreamingContent] = useState("");
   const bottomRef = useRef<HTMLDivElement>(null);
+
+  const SUGGESTED_PROMPTS = [
+    "Find me mountain stays under ₹3000",
+    "Suggest honeymoon stays",
+    "Weekend trip from Delhi",
+    "Family stay with parking",
+    "Pet friendly cottages",
+  ];
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, typing]);
+  }, [messages, streamingContent]);
 
-  const sendMessage = (text: string) => {
+  const sendMessage = async (text: string) => {
     if (!text.trim()) return;
 
     const userMsg: Message = {
@@ -41,18 +49,77 @@ export default function ChatWidget() {
     setMessages((prev) => [...prev, userMsg]);
     setInput("");
     setTyping(true);
+    setStreamingContent("");
 
-    window.setTimeout(() => {
+    try {
+      const conversationHistory = messages.slice(-10).map((m) => ({
+        role: m.role as "user" | "assistant",
+        content: m.content,
+      }));
+
+      const payload = {
+        message: text,
+        conversationHistory,
+      };
+      console.log('ChatWidget sending payload:', JSON.stringify(payload, null, 2));
+
+      const response = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        throw new Error((await response.text()) || "StayNest AI is temporarily unavailable. Please try again.");
+      }
+
+      const reader = response.body?.getReader();
+      if (!reader) throw new Error("StayNest AI did not return a response. Please try again.");
+
+      const decoder = new TextDecoder();
+      let fullResponse = "";
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) {
+          const remaining = decoder.decode();
+          if (remaining) {
+            fullResponse += remaining;
+            setStreamingContent(fullResponse);
+          }
+          break;
+        }
+        fullResponse += decoder.decode(value, { stream: true });
+        setStreamingContent(fullResponse);
+      }
+
+      if (!fullResponse.trim()) {
+        throw new Error('StayNest AI did not return a response. Please try again.');
+      }
+
       setMessages((prev) => [
         ...prev,
         {
           id: `a-${Date.now()}`,
           role: "assistant",
-          content: getMockAiResponse(text),
+          content: fullResponse,
         },
       ]);
+    } catch (error) {
+      console.error('ChatWidget request failed:', error);
+      const errorMessage = error instanceof Error ? error.message : 'StayNest AI is temporarily unavailable. Please try again.';
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: `a-${Date.now()}`,
+          role: "assistant",
+          content: errorMessage,
+        },
+      ]);
+    } finally {
       setTyping(false);
-    }, 1200);
+      setStreamingContent("");
+    }
   };
 
   const handleSubmit = (e: FormEvent) => {
@@ -104,11 +171,22 @@ export default function ChatWidget() {
                       : "bg-white text-gray-700 border border-gray-100 rounded-bl-md dark:bg-gray-800 dark:text-gray-200 dark:border-gray-700",
                   ].join(" ")}
                 >
-                  {msg.content}
+                  <span className="whitespace-pre-wrap">{msg.content}</span>
                 </motion.div>
               ))}
 
-              {typing && (
+              {typing && streamingContent && (
+                <motion.div
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="max-w-[85%] rounded-2xl rounded-bl-md bg-white border border-gray-100 px-3.5 py-2.5 text-sm leading-relaxed dark:bg-gray-800 dark:text-gray-200 dark:border-gray-700"
+                >
+                  <span className="whitespace-pre-wrap">{streamingContent}</span>
+                  <span className="inline-block animate-pulse">▋</span>
+                </motion.div>
+              )}
+
+              {typing && !streamingContent && (
                 <div className="flex items-center gap-1 rounded-2xl rounded-bl-md bg-white border border-gray-100 px-4 py-3 w-fit dark:bg-gray-800 dark:border-gray-700">
                   {[0, 1, 2].map((i) => (
                     <motion.span
@@ -145,6 +223,7 @@ export default function ChatWidget() {
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   placeholder="Ask about stays, trips..."
+                  disabled={typing}
                   className="flex-1 rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
                 />
                 <motion.button
@@ -152,6 +231,7 @@ export default function ChatWidget() {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-600 text-white"
+                  disabled={typing || !input.trim()}
                 >
                   <Send className="h-4 w-4" strokeWidth={2} />
                 </motion.button>

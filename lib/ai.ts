@@ -1,11 +1,18 @@
-import OpenAI from 'openai';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 
-function getOpenAIClient() {
-  const apiKey = process.env.OPENAI_API_KEY;
+const GEMINI_MODEL = 'gemini-3.5-flash';
+const GEMINI_REQUEST_OPTIONS = { apiVersion: 'v1beta' };
+
+function getGeminiClient() {
+  const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
-    throw new Error('OPENAI_API_KEY is not configured');
+    throw new Error('GEMINI_API_KEY is not configured');
   }
-  return new OpenAI({ apiKey });
+  return new GoogleGenerativeAI(apiKey);
+}
+
+function getGeminiModel(params: Parameters<GoogleGenerativeAI['getGenerativeModel']>[0]) {
+  return getGeminiClient().getGenerativeModel(params, GEMINI_REQUEST_OPTIONS);
 }
 
 export interface Property {
@@ -72,7 +79,8 @@ export async function searchPropertiesWithAI(
   availableProperties: Property[]
 ): Promise<AIPropertySearchResult> {
   try {
-    const openai = getOpenAIClient();
+    const model = getGeminiModel({ model: GEMINI_MODEL });
+
     const propertyContext = availableProperties
       .map(
         (p) => `
@@ -86,12 +94,7 @@ export async function searchPropertiesWithAI(
       )
       .join('\n');
 
-    const response = await openai.chat.completions.create({
-      model: 'gpt-4o-mini',
-      messages: [
-        {
-          role: 'system',
-          content: `You are an AI assistant for StayNest, a homestay booking platform. 
+    const prompt = `You are an AI assistant for StayNest, a homestay booking platform.
 Your task is to understand natural language search queries and extract structured filters.
 
 Available properties:
@@ -117,21 +120,22 @@ Respond in JSON format with this structure:
     "keywords": ["peaceful", "mountain"]
   },
   "explanation": "brief explanation of what you understood"
-}`,
-        },
-        {
-          role: 'user',
-          content: query,
-        },
-      ],
-      response_format: { type: 'json_object' },
-      temperature: 0.3,
-    });
+}
 
-    const result = JSON.parse(response.choices[0].message.content || '{}');
-    return result as AIPropertySearchResult;
+User query: ${query}`;
+
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    const text = response.text();
+
+    // Extract JSON from response (Gemini may add markdown formatting)
+    const jsonMatch = text.match(/\{[\s\S]*\}/);
+    const jsonString = jsonMatch ? jsonMatch[0] : text;
+    const parsedResult = JSON.parse(jsonString);
+
+    return parsedResult as AIPropertySearchResult;
   } catch (error) {
-    if (error instanceof Error && error.message === 'OPENAI_API_KEY is not configured') {
+    if (error instanceof Error && error.message === 'GEMINI_API_KEY is not configured') {
       throw new Error('AI features are unavailable until an API key is configured');
     }
     throw error;
@@ -147,13 +151,9 @@ export async function generateTripPlan(
   preferences?: string
 ): Promise<AITripPlan> {
   try {
-    const openai = getOpenAIClient();
-    const response = await openai.chat.completions.create({
-      model: 'gpt-4o-mini',
-      messages: [
-        {
-          role: 'system',
-          content: `You are an expert travel planner for StayNest. 
+    const model = getGeminiModel({ model: GEMINI_MODEL });
+
+    const prompt = `You are an expert travel planner for StayNest.
 Generate detailed trip itineraries based on user preferences.
 
 Respond in JSON format with this structure:
@@ -175,21 +175,22 @@ Respond in JSON format with this structure:
   "tips": ["tip 1", "tip 2"],
   "packingList": ["item 1", "item 2"],
   "weatherInfo": "weather advice"
-}`,
-        },
-        {
-          role: 'user',
-          content: `Plan a ${duration}-day trip to ${destination} for ${people} people with a budget of ₹${budget}. ${preferences || ''}`,
-        },
-      ],
-      response_format: { type: 'json_object' },
-      temperature: 0.7,
-    });
+}
 
-    const result = JSON.parse(response.choices[0].message.content || '{}');
-    return result as AITripPlan;
+Plan a ${duration}-day trip to ${destination} for ${people} people with a budget of ₹${budget}. ${preferences || ''}`;
+
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    const text = response.text();
+
+    // Extract JSON from response (Gemini may add markdown formatting)
+    const jsonMatch = text.match(/\{[\s\S]*\}/);
+    const jsonString = jsonMatch ? jsonMatch[0] : text;
+    const parsedResult = JSON.parse(jsonString);
+
+    return parsedResult as AITripPlan;
   } catch (error) {
-    if (error instanceof Error && error.message === 'OPENAI_API_KEY is not configured') {
+    if (error instanceof Error && error.message === 'GEMINI_API_KEY is not configured') {
       throw new Error('AI features are unavailable until an API key is configured');
     }
     throw error;
@@ -202,17 +203,13 @@ export async function summarizeReviews(
   reviews: Array<{ rating: number; comment: string }>
 ): Promise<AIReviewSummary> {
   try {
-    const openai = getOpenAIClient();
+    const model = getGeminiModel({ model: GEMINI_MODEL });
+
     const reviewsText = reviews
       .map((r, i) => `Review ${i + 1} (${r.rating}/5): ${r.comment}`)
       .join('\n');
 
-    const response = await openai.chat.completions.create({
-      model: 'gpt-4o-mini',
-      messages: [
-        {
-          role: 'system',
-          content: `You are an AI assistant for StayNest. 
+    const prompt = `You are an AI assistant for StayNest.
 Summarize reviews for a property and provide actionable insights.
 
 Respond in JSON format with this structure:
@@ -222,115 +219,118 @@ Respond in JSON format with this structure:
   "cons": ["con 1", "con 2"],
   "recommendation": "final recommendation",
   "rating": overall rating out of 5
-}`,
-        },
-        {
-          role: 'user',
-          content: `Summarize these reviews for ${propertyName}:\n\n${reviewsText}`,
-        },
-      ],
-      response_format: { type: 'json_object' },
-      temperature: 0.5,
-    });
+}
 
-    const result = JSON.parse(response.choices[0].message.content || '{}');
-    return result as AIReviewSummary;
+Summarize these reviews for ${propertyName}:\n\n${reviewsText}`;
+
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    const text = response.text();
+
+    // Extract JSON from response (Gemini may add markdown formatting)
+    const jsonMatch = text.match(/\{[\s\S]*\}/);
+    const jsonString = jsonMatch ? jsonMatch[0] : text;
+    const parsedResult = JSON.parse(jsonString);
+
+    return parsedResult as AIReviewSummary;
   } catch (error) {
-    if (error instanceof Error && error.message === 'OPENAI_API_KEY is not configured') {
+    if (error instanceof Error && error.message === 'GEMINI_API_KEY is not configured') {
       throw new Error('AI features are unavailable until an API key is configured');
     }
     throw error;
   }
 }
 
-// AI Chat Assistant
-export async function chatWithAI(
-  message: string,
-  conversationHistory: Array<{ role: 'user' | 'assistant'; content: string }> = []
-): Promise<string> {
-  try {
-    const openai = getOpenAIClient();
-    const response = await openai.chat.completions.create({
-      model: 'gpt-4o-mini',
-      messages: [
-        {
-          role: 'system',
-          content: `You are a helpful AI travel assistant for StayNest, an AI-powered homestay recommendation platform in India.
-
-Your capabilities:
-- Help users find homestays based on their preferences
-- Provide travel recommendations and tips
-- Assist with trip planning
-- Answer questions about destinations in India
-- Suggest activities and experiences
-
-Be friendly, helpful, and concise. Focus on providing actionable advice.
-If you don't have specific information about a property, suggest general recommendations.`,
-        },
-        ...conversationHistory,
-        {
-          role: 'user',
-          content: message,
-        },
-      ],
-      temperature: 0.7,
-      max_tokens: 500,
-    });
-
-    return response.choices[0].message.content || 'Sorry, I could not generate a response.';
-  } catch (error) {
-    if (error instanceof Error && error.message === 'OPENAI_API_KEY is not configured') {
-      throw new Error('AI features are unavailable until an API key is configured');
-    }
-    throw error;
-  }
+export interface ChatProperty {
+  id: string;
+  title: string;
+  description: string;
+  city: string;
+  country: string;
+  pricePerNight: number;
+  bedrooms: number;
+  bathrooms: number;
+  guests: number;
+  amenities: string[];
+  rating: number;
+  category: string | null;
+  aiTags: string[];
 }
 
-// Streaming AI Chat
+const CHAT_GENERATION_CONFIG = {
+  temperature: 0.2,
+  topP: 0.8,
+  topK: 20,
+  maxOutputTokens: 900,
+};
+
+const RESTRICTED_PROPERTY_TERMS = /\b(hotel|resort|hostel)\b/i;
+
+function isIndianHomestay(property: ChatProperty) {
+  const searchable = `${property.title} ${property.description} ${property.category ?? ''}`;
+  return property.country.trim().toLowerCase() === 'india' && !RESTRICTED_PROPERTY_TERMS.test(searchable);
+}
+
+function toChatHistory(history: Array<{ role: 'user' | 'assistant'; content: string }>) {
+  const cleaned = history
+    .slice(-8)
+    .filter((item) => item.content.trim())
+    .map((item) => ({
+      role: item.role === 'assistant' ? 'model' as const : 'user' as const,
+      parts: [{ text: item.content.slice(0, 2_000) }],
+    }));
+
+  const firstUser = cleaned.findIndex((item) => item.role === 'user');
+  return firstUser === -1 ? [] : cleaned.slice(firstUser);
+}
+
+// Streaming AI Chat. The database, not the model, is the source of truth for listings.
 export async function* streamChatWithAI(
   message: string,
-  conversationHistory: Array<{ role: 'user' | 'assistant'; content: string }> = []
+  conversationHistory: Array<{ role: 'user' | 'assistant'; content: string }> = [],
+  properties: ChatProperty[] = []
 ): AsyncGenerator<string, void, unknown> {
-  try {
-    const openai = getOpenAIClient();
-    const stream = await openai.chat.completions.create({
-      model: 'gpt-4o-mini',
-      messages: [
-        {
-          role: 'system',
-          content: `You are a helpful AI travel assistant for StayNest, an AI-powered homestay recommendation platform in India.
+  const indianHomestays = properties.filter(isIndianHomestay);
+  const propertyContext = indianHomestays.length
+    ? indianHomestays.map((property) => [
+      `ID: ${property.id}`,
+      `Name: ${property.title}`,
+      `Location: ${property.city}, India`,
+      `Price: ₹${property.pricePerNight}/night`,
+      `Capacity: ${property.guests} guests`,
+      `Rating: ${property.rating}/5`,
+      `Amenities: ${property.amenities.join(', ') || 'Not listed'}`,
+      `Details: ${property.description.slice(0, 350)}`,
+    ].join(' | ')).join('\n')
+    : 'No eligible Indian homestays are currently listed.';
 
-Your capabilities:
-- Help users find homestays based on their preferences
-- Provide travel recommendations and tips
-- Assist with trip planning
-- Answer questions about destinations in India
-- Suggest activities and experiences
+  const systemInstruction = `You are StayNest's Indian-homestay concierge. Use only the verified listings below.
 
-Be friendly, helpful, and concise. Focus on providing actionable advice.`,
-        },
-        ...conversationHistory,
-        {
-          role: 'user',
-          content: message,
-        },
-      ],
-      temperature: 0.7,
-      max_tokens: 500,
-      stream: true,
-    });
+Non-negotiable rules:
+- StayNest recommends Indian homestays only. Never recommend or discuss booking hotels, resorts, hostels, or any international destination. If asked for one, briefly explain the scope and ask for an Indian homestay destination.
+- Never invent a property, price, rating, amenity, availability, city, or destination.
+- A recommendation request with a destination and nightly budget must contain exactly three distinct listings, all in that exact destination, all at or below the budget, and all from VERIFIED LISTINGS. If fewer than three qualify, do not substitute nearby/over-budget properties; say so and ask one concise follow-up question.
+- Before recommendations, ask one concise question only when the destination or nightly budget is missing or ambiguous.
+- For each of exactly three matches, use this exact readable format:
+  **1. Property name** — ₹price/night · rating/5
+  Amenities: amenity, amenity
+  Why it fits: one sentence
+- For non-listing travel questions, give short India-only advice. Do not name accommodation types other than homestays.
+- Be concise (under 220 words), helpful, and use Markdown with blank lines between recommendations.
 
-    for await (const chunk of stream) {
-      const content = chunk.choices[0]?.delta?.content || '';
-      if (content) {
-        yield content;
-      }
-    }
-  } catch (error) {
-    if (error instanceof Error && error.message === 'OPENAI_API_KEY is not configured') {
-      yield 'AI features are unavailable until an API key is configured.';
-    } else {
-      yield 'Sorry, I encountered an error. Please try again.';
-    }
+VERIFIED LISTINGS (all eligible Indian homestays):
+${propertyContext}`;
+
+  const model = getGeminiModel({
+    model: GEMINI_MODEL,
+    systemInstruction,
+    generationConfig: CHAT_GENERATION_CONFIG,
+  });
+  const chat = model.startChat({ history: toChatHistory(conversationHistory) });
+  const result = await chat.sendMessageStream(message.slice(0, 2_000));
+
+  for await (const chunk of result.stream) {
+    const text = chunk.text();
+    if (text) yield text;
   }
 }

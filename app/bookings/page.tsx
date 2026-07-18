@@ -166,12 +166,13 @@ export default function BookingsPage() {
                     <div className="flex flex-col items-end gap-2">
                       <span className={["rounded-full px-3 py-1 text-xs font-medium", b.status === "CONFIRMED" ? "bg-blue-100 text-blue-700" : b.status === "PENDING" ? "bg-yellow-100 text-yellow-700" : b.status === "COMPLETED" ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-600"].join(" ")}>{b.status}</span>
                       {b.status === "PENDING" || b.status === "CONFIRMED" ? (
-                        <button
+                        <span
+                          role="button"
                           onClick={(e) => { e.stopPropagation(); handleCancelBooking(b.id); }}
-                          className="text-xs text-red-600 hover:text-red-700"
+                          className="text-xs text-red-600 hover:text-red-700 cursor-pointer"
                         >
                           Cancel
-                        </button>
+                        </span>
                       ) : null}
                     </div>
                   </div>

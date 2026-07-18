@@ -23,7 +23,7 @@ interface AuthContextValue {
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const { data: session, status } = useSession();
+  const { data: session, status, update } = useSession();
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -42,7 +42,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (result?.error) {
       throw new Error("Invalid email or password");
     }
-  }, []);
+
+    // Wait for session to be established
+    await update();
+  }, [update]);
 
   const signup = useCallback(async (name: string, email: string, password: string) => {
     const res = await fetch("/api/auth/register", {
@@ -57,12 +60,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
 
     // Auto-login after registration
-    await signIn("credentials", {
+    const result = await signIn("credentials", {
       email,
       password,
       redirect: false,
     });
-  }, []);
+
+    if (result?.error) {
+      throw new Error("Registration successful but login failed");
+    }
+
+    // Wait for session to be established
+    await update();
+  }, [update]);
 
   const logout = useCallback(async () => {
     await signOut({ redirect: false });

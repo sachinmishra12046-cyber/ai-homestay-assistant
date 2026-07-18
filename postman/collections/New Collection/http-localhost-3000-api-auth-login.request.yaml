@@ -1,0 +1,22 @@
+$kind: http-request
+name: http://localhost:3000/api/auth/login
+description: ""
+url: http://localhost:3000/api/auth/login
+method: POST
+body:
+  type: json
+  content: |-
+    {
+      "email": "testuser@staynest.com",
+      "password": "Test@1234"
+    }
+scripts:
+  - type: beforeRequest
+    code: ""
+    language: text/javascript
+  - type: afterResponse
+    code: |-
+      const response = pm.response.json();
+      pm.environment.set("jwt_token", response.token);
+    language: text/javascript
+order: 1783878984299
