@@ -38,12 +38,13 @@ export default function ChatWidget() {
   }, [messages, streamingContent]);
 
   const sendMessage = async (text: string) => {
-    if (!text.trim()) return;
+    const message = text.trim();
+    if (!message || typing) return;
 
     const userMsg: Message = {
       id: `u-${Date.now()}`,
       role: "user",
-      content: text.trim(),
+      content: message,
     };
 
     setMessages((prev) => [...prev, userMsg]);
@@ -57,16 +58,13 @@ export default function ChatWidget() {
         content: m.content,
       }));
 
-      const payload = {
-        message: text,
-        conversationHistory,
-      };
-      console.log('ChatWidget sending payload:', JSON.stringify(payload, null, 2));
-
       const response = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
+        body: JSON.stringify({
+          message,
+          conversationHistory,
+        }),
       });
 
       if (!response.ok) {
@@ -212,6 +210,7 @@ export default function ChatWidget() {
                     key={prompt}
                     type="button"
                     onClick={() => sendMessage(prompt)}
+                    disabled={typing}
                     className="shrink-0 rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-[10px] font-medium text-emerald-700 hover:bg-emerald-100 dark:border-emerald-900 dark:bg-emerald-950/50 dark:text-emerald-300"
                   >
                     {prompt}

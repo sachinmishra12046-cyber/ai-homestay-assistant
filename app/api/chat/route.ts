@@ -15,6 +15,7 @@ const chatRequestSchema = z.object({
 });
 
 const NON_HOMESTAY_TERMS = /\b(hotel|resort|hostel)\b/i;
+const RECOMMENDATION_TERMS = /\b(recommend|suggest|find|show|stay|homestay|honeymoon|weekend)\b/i;
 
 function findRequestedCity(message: string, cities: string[]) {
   const normalizedMessage = message.toLocaleLowerCase('en-IN');
@@ -33,8 +34,42 @@ function isHomestay(property: { title: string; description: string; category: st
   return !NON_HOMESTAY_TERMS.test(`${property.title} ${property.description} ${property.category ?? ''}`);
 }
 
-function insufficientMatchesMessage(destination: string, budget: number, count: number) {
-  return `I found ${count} Indian homestay${count === 1 ? '' : 's'} in ${destination} at or below ₹${budget}/night. StayNest needs three exact matches, so I won’t substitute another city or an over-budget stay. Would you like to adjust your budget or choose another Indian destination?`;
+function formatRecommendations(properties: Array<{
+  title: string;
+  city: string;
+  pricePerNight: number;
+  rating: number;
+  amenities: string[];
+  description: string;
+}>) {
+  const recommendations = properties.slice(0, 3).map((property, index) => [
+    `**Property ${index + 1}**`,
+    `Name: ${property.title}`,
+    `Location: ${property.city}, India`,
+    `Price: ₹${property.pricePerNight}/night`,
+    `Rating: ${property.rating}/5`,
+    `Amenities: ${property.amenities.slice(0, 5).join(', ') || 'Not listed'}`,
+    `Why it matches: ${property.description}`,
+  ].join('\n')).join('\n\n');
+
+  return `${recommendations}\n\n**Travel Tips**\n- Confirm dates and availability with the host before booking.\n- Review the listed amenities and house rules before you travel.`;
+}
+
+function clarificationMessage(message: string, destination?: string, budget?: number) {
+  if (/weekend\s+trip\s+from\s+/i.test(message)) {
+    const start = message.match(/weekend\s+trip\s+from\s+([^,?.!]+)/i)?.[1]?.trim();
+    return `Which destination would you like to visit from ${start || 'your starting city'}?\nOr would you like me to suggest nearby weekend destinations?`;
+  }
+  if (/honeymoon/i.test(message) && !destination && !budget) {
+    return 'Which Indian destination are you planning for your honeymoon, and what is your nightly budget?';
+  }
+  if (!destination && !budget) {
+    return 'Which destination are you planning to visit, and what is your maximum nightly budget?';
+  }
+  if (!destination) {
+    return 'Which destination are you planning to visit? (For example: Manali, Mussoorie, Nainital or Munnar)';
+  }
+  return 'What is your maximum budget per night in ₹?';
 }
 
 function serviceErrorMessage(error: unknown) {
@@ -60,10 +95,7 @@ function logChatError(context: string, error: unknown) {
 
 export async function POST(req: NextRequest) {
   try {
-    const rawBody = await req.json();
-    console.log('Chat API raw payload:', JSON.stringify(rawBody, null, 2));
-    const payload = chatRequestSchema.parse(rawBody);
-    console.log('Chat API validated payload:', JSON.stringify(payload, null, 2));
+    const payload = chatRequestSchema.parse(await req.json());
 
     // Resolve the city locally, then apply destination and budget constraints in SQL
     // before any request is sent to Gemini.
@@ -76,7 +108,8 @@ export async function POST(req: NextRequest) {
     const destination = findRequestedCity(conversationText, cityRows.map((row) => row.city));
     const budget = findNightlyBudget(conversationText);
 
-    const properties = destination && budget
+    const isRecommendationRequest = RECOMMENDATION_TERMS.test(payload.message);
+    const properties = destination && budget && isRecommendationRequest
       ? await prisma.property.findMany({
         where: {
           country: { equals: 'India', mode: 'insensitive' },
@@ -107,15 +140,24 @@ export async function POST(req: NextRequest) {
     const stream = new ReadableStream({
       async start(controller) {
         try {
-          if (destination && budget && matchingHomestays.length < 3) {
-            controller.enqueue(encoder.encode(insufficientMatchesMessage(destination, budget, matchingHomestays.length)));
+          if (isRecommendationRequest && (!destination || !budget)) {
+            controller.enqueue(encoder.encode(clarificationMessage(payload.message, destination, budget)));
             return;
           }
 
-          // Gemini receives only the already-filtered exact-city, in-budget Indian homestays.
-          for await (const chunk of streamChatWithAI(payload.message, payload.conversationHistory, matchingHomestays)) {
-            controller.enqueue(encoder.encode(chunk));
+          if (isRecommendationRequest && matchingHomestays.length < 3) {
+            controller.enqueue(encoder.encode("I couldn't find three verified homestays matching your request.\nWould you like to increase your budget or choose another destination?"));
+            return;
           }
+
+          if (isRecommendationRequest) {
+            // This response is deterministic so a model can never substitute a property, city, price, or rating.
+            controller.enqueue(encoder.encode(formatRecommendations(matchingHomestays)));
+            return;
+          }
+
+          // Non-recommendation requests may use Gemini. It receives no unfiltered listings.
+          for await (const chunk of streamChatWithAI(payload.message, payload.conversationHistory, [])) controller.enqueue(encoder.encode(chunk));
         } catch (error) {
           logChatError('Chat stream failed', error);
           controller.enqueue(encoder.encode(serviceErrorMessage(error)));
@@ -132,49 +174,6 @@ export async function POST(req: NextRequest) {
         'X-Content-Type-Options': 'nosniff',
       },
     });
-/*
-    const properties = await prisma.property.findMany({
-      select: {
-        id: true,
-        title: true,
-        description: true,
-        city: true,
-        country: true,
-        pricePerNight: true,
-        bedrooms: true,
-        bathrooms: true,
-        guests: true,
-        amenities: true,
-        rating: true,
-        category: true,
-        aiTags: true,
-      },
-    });
-
-    const encoder = new TextEncoder();
-    const stream = new ReadableStream({
-      async start(controller) {
-        try {
-          for await (const chunk of streamChatWithAI(payload.message, payload.conversationHistory, properties)) {
-            controller.enqueue(encoder.encode(chunk));
-          }
-        } catch (error) {
-          logChatError('Chat stream failed', error);
-          controller.enqueue(encoder.encode(serviceErrorMessage(error)));
-        } finally {
-          controller.close();
-        }
-      },
-    });
-
-    return new Response(stream, {
-      headers: {
-        'Content-Type': 'text/plain; charset=utf-8',
-        'Cache-Control': 'no-cache, no-transform',
-        'X-Content-Type-Options': 'nosniff',
-      },
-    });
-*/
   } catch (error) {
     if (error instanceof z.ZodError) {
       return new Response('Please send a valid message.', { status: 400 });
