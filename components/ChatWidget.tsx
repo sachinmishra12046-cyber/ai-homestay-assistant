@@ -53,9 +53,9 @@ export default function ChatWidget() {
     setStreamingContent("");
 
     try {
-      const conversationHistory = messages.slice(-10).map((m) => ({
+      const conversationHistory = messages.slice(-8).map((m) => ({
         role: m.role as "user" | "assistant",
-        content: m.content,
+        content: m.content.slice(0, 2_000),
       }));
 
       const response = await fetch("/api/chat", {
