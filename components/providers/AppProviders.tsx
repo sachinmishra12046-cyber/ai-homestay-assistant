@@ -5,6 +5,7 @@ import { WishlistProvider } from "@/context/WishlistProvider";
 import { AuthProvider } from "@/context/AuthProvider";
 import { NotificationProvider } from "@/context/NotificationProvider";
 import ChatWidget from "@/components/ChatWidget";
+import ErrorBoundary from "@/components/ErrorBoundary";
 import { SessionProvider } from "next-auth/react";
 
 export default function AppProviders({
@@ -19,7 +20,9 @@ export default function AppProviders({
           <NotificationProvider>
             <WishlistProvider>
               {children}
-              <ChatWidget />
+              <ErrorBoundary>
+                <ChatWidget />
+              </ErrorBoundary>
             </WishlistProvider>
           </NotificationProvider>
         </AuthProvider>
