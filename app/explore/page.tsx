@@ -338,13 +338,13 @@ function PropertyCard({ property, isWishlisted, onToggleWishlist }: { property: 
               Instant Book
             </div>
           )}
-          {property.aiMatch && (
+          {(property.aiMatch ?? 0) > 0 && (
             <div className="absolute right-3 bottom-3 rounded-full bg-purple-600 px-3 py-1 text-xs font-semibold text-white shadow-md flex items-center gap-1">
               <Sparkles className="h-3 w-3" />
               {property.aiMatch}% Match
             </div>
           )}
-          {property.ecoScore && property.ecoScore >= 80 && (
+          {(property.ecoScore ?? 0) >= 80 && (
             <div className="absolute top-3 left-1/2 -translate-x-1/2 rounded-full bg-green-600 px-3 py-1 text-xs font-semibold text-white shadow-md flex items-center gap-1">
               <Leaf className="h-3 w-3" />
               Eco {property.ecoScore}
@@ -697,7 +697,7 @@ export default function ExplorePage() {
                     type="text"
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
-                    placeholder="Try: 'Peaceful mountain cabin under ₹3000' or 'Beach villa with pool'"
+                    placeholder="Try: 'Mountain cabin under ₹3000'"
                     className="flex-1 border-0 bg-transparent px-14 py-5 text-gray-900 text-lg placeholder-gray-400 focus:outline-none rounded-full"
                   />
                   {search && (
