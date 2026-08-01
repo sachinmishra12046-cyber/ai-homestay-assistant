@@ -2,6 +2,7 @@
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { useSession, signIn, signOut } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 interface User {
   id: string;
@@ -24,6 +25,7 @@ const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const { data: session, status, update } = useSession();
+  const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -43,9 +45,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       throw new Error("Invalid email or password");
     }
 
-    // Wait for session to be established
-    await update();
-  }, [update]);
+    // Force a router refresh to ensure session cookies are propagated
+    // This is critical for production environments where session propagation may be slower
+    router.refresh();
+  }, [router]);
 
   const signup = useCallback(async (name: string, email: string, password: string) => {
     const res = await fetch("/api/auth/register", {
@@ -70,13 +73,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       throw new Error("Registration successful but login failed");
     }
 
-    // Wait for session to be established
-    await update();
-  }, [update]);
+    // Force a router refresh to ensure session cookies are propagated
+    router.refresh();
+  }, [router]);
 
   const logout = useCallback(async () => {
     await signOut({ redirect: false });
-  }, []);
+    router.refresh();
+  }, [router]);
 
   const user: User | null = session?.user ? {
     id: session.user.id,

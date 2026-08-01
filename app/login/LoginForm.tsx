@@ -41,6 +41,8 @@ export default function LoginForm() {
     setIsLoading(true);
     try {
       await login(email, password);
+      // Wait a moment for session to be fully propagated
+      await new Promise(resolve => setTimeout(resolve, 100));
       // Redirect to the page user was trying to access, or dashboard
       const redirectUrl = searchParams.get('redirect') || '/dashboard';
       router.push(redirectUrl);
