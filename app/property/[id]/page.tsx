@@ -69,7 +69,7 @@ interface Property {
   };
 }
 
-const amenityIcons: { [key: string]: any } = {
+const amenityIcons: { [key: string]: React.ComponentType<{ className?: string; strokeWidth?: number }> } = {
   wifi: Wifi,
   parking: Car,
   breakfast: Utensils,
@@ -111,7 +111,7 @@ export default function PropertyDetailPage() {
     loadProperty();
   }, [params.id]);
 
-  const isWishlisted = property ? wishlist.includes(property.id as any) : false;
+  const isWishlisted = property ? wishlist.includes(String(property.id)) : false;
 
   const handleBooking = async () => {
     if (!user) {
@@ -237,7 +237,7 @@ export default function PropertyDetailPage() {
                 </div>
                 <div className="flex items-center gap-2">
                   <button
-                    onClick={() => toggleWishlist(property.id as any)}
+                    onClick={() => toggleWishlist(String(property.id))}
                     className="rounded-full p-2 hover:bg-gray-100 dark:hover:bg-gray-800"
                   >
                     <Heart
@@ -431,7 +431,7 @@ export default function PropertyDetailPage() {
                 </div>
               )}
 
-              <p className="mt-4 text-center text-xs text-gray-500">You won't be charged yet</p>
+              <p className="mt-4 text-center text-xs text-gray-500">You won&apos;t be charged yet</p>
             </Card>
           </div>
         </div>

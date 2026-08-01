@@ -4,10 +4,40 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { useWishlist } from "@/context/WishlistProvider";
 import { motion, AnimatePresence } from "framer-motion";
-import { Sparkles, TrendingUp, X, Search, MapPin, Star, Heart, Wifi, Car, Coffee, Mountain, Waves, TreePine, Gem, DollarSign, Leaf, Zap, Shield, Award, Map, ChevronLeft, ChevronRight, Check } from "lucide-react";
-import { useState, useMemo, useCallback, useEffect, useRef } from "react";
+import { Sparkles, TrendingUp, X, MapPin, Star, Heart, Wifi, Car, Coffee, Mountain, Waves, TreePine, Gem, DollarSign, Leaf, Zap, Shield, Award, Map, ChevronLeft, ChevronRight, Check } from "lucide-react";
+import { useState, useMemo, useCallback, useEffect } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
+import { Suspense } from "react";
+
+interface APIProperty {
+  id: number;
+  title: string;
+  description: string;
+  pricePerNight: number;
+  rating?: number;
+  averageRating?: number;
+  _count?: {
+    reviews: number;
+  };
+  images?: string[];
+  city: string;
+  category?: string | null;
+  amenities?: string[];
+  isSuperhost?: boolean;
+  isInstantBook?: boolean;
+  ecoScore?: number;
+  latitude?: number;
+  longitude?: number;
+  aiTags?: string[];
+  host?: {
+    name?: string;
+    avatar?: string;
+  };
+  bedrooms?: number;
+  bathrooms?: number;
+  guests?: number;
+}
 
 // Custom debounce hook
 function useDebounce<T>(value: T, delay: number): T {
@@ -109,7 +139,7 @@ function filterAndSortStays(
 ): Stay[] {
   const query = search.toLowerCase().trim();
 
-  // AI Natural Language Parsing - only apply when there's a search query
+  // AI Natural Language Parsing - only apply when there&apos;s a search query
   const parseNaturalLanguage = (query: string, stay: Stay): boolean => {
     // Price filters
     const priceMatch = query.match(/under\s*₹?(\d+)/i);
@@ -202,7 +232,7 @@ function filterAndSortStays(
     const matchCategory =
       activeCategory === "All" || stay.category === activeCategory;
 
-    // Search filter - only apply when there's a query
+    // Search filter - only apply when there&apos;s a query
     const matchSearch =
       !query ||
       stay.title.toLowerCase().includes(query) ||
@@ -461,7 +491,7 @@ function SectionHeader({ title, subtitle, icon: Icon }: { title: string; subtitl
   );
 }
 
-export default function ExplorePage() {
+function ExplorePageInner() {
   const searchParams = useSearchParams();
   const { wishlist, toggleWishlist } = useWishlist();
   const [stays, setStays] = useState<Stay[]>([]);
@@ -501,7 +531,7 @@ export default function ExplorePage() {
           const properties = data.properties || [];
           
           // Transform API data to match Stay interface
-          const transformedStays = properties.map((property: any) => ({
+          const transformedStays = properties.map((property: APIProperty) => ({
             id: String(property.id),
             title: property.title,
             description: property.description,
@@ -613,10 +643,10 @@ export default function ExplorePage() {
     // Simulate AI response
     setTimeout(() => {
       const responses = [
-        "Based on your preferences, I'd recommend checking out our eco-friendly stays in Coorg. They have excellent ratings and sustainable practices.",
-        "For a weekend getaway, I suggest looking at our mountain retreats in Manali or Shimla. They're perfect for nature lovers with stunning views.",
+        "Based on your preferences, I&apos;d recommend checking out our eco-friendly stays in Coorg. They have excellent ratings and sustainable practices.",
+        "For a weekend getaway, I suggest looking at our mountain retreats in Manali or Shimla. They&apos;re perfect for nature lovers with stunning views.",
         "Looking for budget options? Check our filter for stays under ₹2000/night. We have several options in Goa and Kasol.",
-        "For work from home stays, I recommend properties with fast WiFi and dedicated workspaces. Filter by 'WiFi' to see available options.",
+        "For work from home stays, I recommend properties with fast WiFi and dedicated workspaces. Filter by &apos;WiFi&apos; to see available options.",
         "Pet-friendly options are available - use our filters to find properties that welcome furry companions.",
       ];
       // Deterministic selection based on message length
@@ -659,7 +689,7 @@ export default function ExplorePage() {
             </motion.div>
 
             <h1 className="text-5xl font-bold text-white sm:text-6xl lg:text-7xl tracking-tight">
-              Discover India's Finest
+              Discover India&apos;s Finest
               <span className="block bg-gradient-to-r from-emerald-400 to-teal-300 bg-clip-text text-transparent">
                 Homestays
               </span>
@@ -1222,7 +1252,7 @@ export default function ExplorePage() {
                 {chatMessages.length === 0 && (
                   <div className="space-y-3">
                     <p className="text-center text-sm text-gray-500 dark:text-gray-400">
-                      Hi! I'm your AI travel assistant. How can I help you today?
+                      Hi! I&apos;m your AI travel assistant. How can I help you today?
                     </p>
                     <div className="flex flex-wrap gap-2">
                       {suggestedPrompts.map((prompt) => (
@@ -1299,5 +1329,18 @@ export default function ExplorePage() {
         )}
       </AnimatePresence>
     </div>
+  );
+}
+
+function ExplorePageContent() {
+  const searchParams = useSearchParams();
+  return <ExplorePageInner />;
+}
+
+export default function ExplorePageWrapper() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Loading...</div>}>
+      <ExplorePageContent />
+    </Suspense>
   );
 }

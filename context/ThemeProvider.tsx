@@ -59,7 +59,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     };
     media.addEventListener("change", onChange);
     return () => media.removeEventListener("change", onChange);
-  }, [applyTheme]);
+  }, [applyTheme, STORAGE_KEYS]);
 
   const setTheme = useCallback(
     (next: Theme) => {

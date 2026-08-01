@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { Prisma } from '@prisma/client';
 
 export async function GET(req: NextRequest) {
   try {
@@ -15,7 +16,7 @@ export async function GET(req: NextRequest) {
 
     const skip = (page - 1) * limit;
 
-    const where: any = {};
+    const where: Prisma.PropertyWhereInput = {};
 
     if (city) {
       where.city = { contains: city, mode: 'insensitive' };
@@ -35,7 +36,7 @@ export async function GET(req: NextRequest) {
       where.guests = { gte: parseInt(guests) };
     }
 
-    const orderBy: any = {};
+    const orderBy: Prisma.PropertyOrderByWithRelationInput = {};
     if (sort === 'price-asc') orderBy.pricePerNight = 'asc';
     else if (sort === 'price-desc') orderBy.pricePerNight = 'desc';
     else if (sort === 'rating') orderBy.rating = 'desc';

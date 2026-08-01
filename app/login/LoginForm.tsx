@@ -69,7 +69,7 @@ export default function LoginForm() {
     <AuthLayout
       title="Welcome Back"
       subtitle="Sign in to access AI recommendations, bookings, and your personalized travel dashboard."
-      footerText="Don't have an account?"
+      footerText="Don&apos;t have an account?"
       footerLink="Create Account"
       footerLinkHref="/signup"
     >

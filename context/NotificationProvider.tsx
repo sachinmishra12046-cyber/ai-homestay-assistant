@@ -35,7 +35,7 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
       const stored = localStorage.getItem("staynest-notifications");
       if (stored) {
         const parsed = JSON.parse(stored);
-        setNotifications(parsed.map((n: any) => ({
+        setNotifications(parsed.map((n: Omit<Notification, "timestamp"> & { timestamp: string }) => ({
           ...n,
           timestamp: new Date(n.timestamp),
         })));

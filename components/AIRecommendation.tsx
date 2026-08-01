@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { Sparkles, ArrowRight, Bot } from "lucide-react";
 import Link from "next/link";
@@ -11,15 +11,15 @@ export default function AIRecommendation() {
   const [prompt, setPrompt] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const [placeholderText, setPlaceholderText] = useState("");
-  const fullPlaceholder = "e.g., I want a peaceful mountain retreat in Himachal with a view, good for 2 people, budget around ₹5000/night...";
+  const fullPlaceholderRef = useRef("e.g., I want a peaceful mountain retreat in Himachal with a view, good for 2 people, budget around ₹5000/night...");
 
   useEffect(() => {
     if (!prompt) {
       let index = 0;
       setIsTyping(true);
       const timer = setInterval(() => {
-        if (index < fullPlaceholder.length) {
-          setPlaceholderText(fullPlaceholder.slice(0, index + 1));
+        if (index < fullPlaceholderRef.current.length) {
+          setPlaceholderText(fullPlaceholderRef.current.slice(0, index + 1));
           index++;
         } else {
           clearInterval(timer);
@@ -28,8 +28,7 @@ export default function AIRecommendation() {
       }, 50);
       return () => clearInterval(timer);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [prompt, fullPlaceholder]);
+  }, [prompt]);
 
   const handleGenerate = () => {
     // Navigate to AI assistant page with the prompt

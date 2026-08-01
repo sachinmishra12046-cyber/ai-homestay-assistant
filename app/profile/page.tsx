@@ -128,7 +128,7 @@ export default function ProfilePage() {
             <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-4">About</h2>
             <dl className="space-y-3 text-sm">
               <div><dt className="text-gray-500 dark:text-gray-400">Email</dt><dd className="font-medium text-gray-900 dark:text-white">{user?.email || "Not provided"}</dd></div>
-              <div><dt className="text-gray-500 dark:text-gray-400">Bio</dt><dd className="text-gray-700 dark:text-gray-300">Eco-travel enthusiast exploring India's hidden homestays.</dd></div>
+              <div><dt className="text-gray-500 dark:text-gray-400">Bio</dt><dd className="text-gray-700 dark:text-gray-300">Eco-travel enthusiast exploring India&apos;s hidden homestays.</dd></div>
               <div><dt className="text-gray-500 dark:text-gray-400">Travel Preferences</dt><dd className="text-gray-700 dark:text-gray-300">Mountain, Forest · Budget ₹2000–4000 · Solo & Couple</dd></div>
             </dl>
           </section>

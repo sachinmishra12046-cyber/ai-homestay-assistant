@@ -63,7 +63,7 @@ const whyCards = [
   {
     icon: <BadgePercent className="w-7 h-7 text-emerald-500" />,
     title: "Best Price Guarantee",
-    desc: "Found it cheaper elsewhere? We'll match it and give you an extra 5% off.",
+    desc: "Found it cheaper elsewhere? We&apos;ll match it and give you an extra 5% off.",
   },
 ];
 
@@ -194,7 +194,7 @@ export default function AboutPage() {
                   <Home className="w-10 h-10 text-white" />
                 </div>
                 <p className="text-2xl font-bold leading-tight">
-                  India's Smartest<br />Homestay Platform
+                  India&apos;s Smartest<br />Homestay Platform
                 </p>
                 <p className="text-sm text-emerald-100">
                   Powered by AI · Rooted in culture
@@ -270,7 +270,7 @@ export default function AboutPage() {
             </span>
             <h2 className="mt-2 text-4xl font-extrabold">
               Everything you need,{" "}
-              <span className="text-emerald-600">nothing you don't</span>
+              <span className="text-emerald-600">nothing you don&apos;t</span>
             </h2>
           </div>
 
@@ -422,7 +422,7 @@ export default function AboutPage() {
               Ready for your<br />next adventure?
             </h2>
             <p className="mt-4 text-emerald-100 text-lg max-w-md mx-auto">
-              Join 10,000+ travelers who've found their perfect stay — or open
+              Join 10,000+ travelers who&apos;ve found their perfect stay — or open
               your home to the world.
             </p>
             <div className="flex flex-wrap justify-center gap-4 mt-10">

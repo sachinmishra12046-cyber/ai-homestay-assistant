@@ -18,7 +18,7 @@ export default function ChatWidget() {
       id: "welcome",
       role: "assistant",
       content:
-        "Hi! I'm StayNest AI. Ask me to find homestays, plan trips, or get personalized recommendations.",
+        "Hi! I&apos;m StayNest AI. Ask me to find homestays, plan trips, or get personalized recommendations.",
     },
   ]);
   const [typing, setTyping] = useState(false);

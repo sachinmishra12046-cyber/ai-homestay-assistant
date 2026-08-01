@@ -229,7 +229,7 @@ export default function AdminDashboard() {
                 <div className="flex items-center justify-between mb-6">
                   <div>
                     <h2 className="text-xl font-bold text-foreground">Revenue Overview</h2>
-                    <p className="text-sm text-muted-foreground">Track your platform's financial performance</p>
+                    <p className="text-sm text-muted-foreground">Track your platform&apos;s financial performance</p>
                   </div>
                   <div className="flex items-center gap-2">
                     {["7d", "30d", "90d", "1y"].map((period) => (

@@ -106,7 +106,7 @@ export default function TripPlannerPage() {
               Plan Your Perfect Trip
             </h1>
             <p className="mx-auto max-w-2xl text-lg text-white/90">
-              Let AI create a personalized itinerary for your next adventure. Just tell us where you want to go and we'll handle the rest.
+              Let AI create a personalized itinerary for your next adventure. Just tell us where you want to go and we&apos;ll handle the rest.
             </p>
           </motion.div>
         </div>

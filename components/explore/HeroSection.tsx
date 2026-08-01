@@ -1,13 +1,13 @@
 import { useState } from "react";
 import { Sparkles, Search, Wand2 } from "lucide-react";
 import ExploreSearchBar from "./SearchBar";
-import { searchPropertiesWithAI, Property } from "@/lib/ai";
+import { searchPropertiesWithAI, Property, AIPropertySearchResult } from "@/lib/ai";
 
 interface HeroSectionProps {
   search: string;
   onSearchChange: (value: string) => void;
   onClear: () => void;
-  onAISearch?: (filters: any) => void;
+  onAISearch?: (filters: AIPropertySearchResult) => void;
   properties?: Property[];
 }
 
@@ -130,7 +130,7 @@ export default function HeroSection({
               </p>
             )}
             <p className="mt-3 text-sm text-emerald-50/70">
-              Try: "I want a peaceful mountain cabin with fast WiFi under ₹5000"
+              Try: &quot;I want a peaceful mountain cabin with fast WiFi under ₹5000&quot;
             </p>
           </div>
         )}

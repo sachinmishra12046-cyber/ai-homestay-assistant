@@ -29,8 +29,8 @@ import { useWishlist } from "@/context/WishlistProvider";
 import { useEffect, useState } from "react";
 
 type MenuItem =
-  | { label: string; href: string; icon: any; action?: never }
-  | { label: string; action: "logout"; icon: any; href?: never };
+  | { label: string; href: string; icon: React.ComponentType<{ className?: string; strokeWidth?: number }>; action?: never }
+  | { label: string; action: "logout"; icon: React.ComponentType<{ className?: string; strokeWidth?: number }>; href?: never };
 
 const menuItems: MenuItem[] = [
   { label: "Dashboard", href: "/dashboard", icon: Home },

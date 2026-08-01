@@ -54,11 +54,11 @@ export default function NotificationDropdown() {
         whileTap={{ scale: 0.95 }}
         onClick={() => setOpen((prev) => !prev)}
         aria-label="Notifications"
-        className="relative inline-flex h-9 w-9 items-center justify-center rounded-xl border border-border bg-card text-foreground transition-colors hover:border-primary/50"
+        className="relative inline-flex h-9 w-9 items-center justify-center rounded-xl border border-gray-200 bg-white text-gray-600 transition-colors hover:border-emerald-200 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 dark:hover:border-emerald-800"
       >
         <Bell className="h-4 w-4" strokeWidth={2} />
         {unreadCount > 0 && (
-          <span className="absolute -right-0.5 -top-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-gradient-primary text-[10px] font-bold text-white shadow-lg shadow-emerald-500/30">
+          <span className="absolute -right-0.5 -top-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-gradient-to-r from-emerald-500 to-emerald-600 text-[10px] font-bold text-white shadow-lg shadow-emerald-500/30">
             {unreadCount}
           </span>
         )}
@@ -78,16 +78,16 @@ export default function NotificationDropdown() {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 8, scale: 0.96 }}
               transition={{ duration: 0.15 }}
-              className="absolute right-0 z-50 mt-2 w-80 overflow-hidden rounded-2xl border border-border glass-strong shadow-2xl sm:w-96"
+              className="absolute right-0 z-50 mt-2 w-80 overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-2xl dark:border-gray-700 dark:bg-gray-900 sm:w-96"
             >
-              <div className="flex items-center justify-between border-b border-border px-4 py-3">
-                <h3 className="text-sm font-bold text-foreground">
+              <div className="flex items-center justify-between border-b border-gray-200 px-4 py-3 dark:border-gray-700">
+                <h3 className="text-sm font-bold text-gray-900 dark:text-white">
                   Notifications
                 </h3>
                 {unreadCount > 0 && (
                   <button
                     onClick={markAllAsRead}
-                    className="text-xs text-primary hover:underline"
+                    className="text-xs text-emerald-600 hover:underline dark:text-emerald-400"
                   >
                     Mark all as read
                   </button>
@@ -96,7 +96,7 @@ export default function NotificationDropdown() {
 
               <ul className="max-h-80 overflow-y-auto custom-scrollbar">
                 {notifications.length === 0 ? (
-                  <li className="px-4 py-8 text-center text-sm text-muted-foreground">
+                  <li className="px-4 py-8 text-center text-sm text-gray-500 dark:text-gray-400">
                     No notifications yet
                   </li>
                 ) : (
@@ -107,8 +107,8 @@ export default function NotificationDropdown() {
                         key={item.id}
                         onClick={() => !item.read && markAsRead(item.id)}
                         className={[
-                          "flex gap-3 border-b border-border px-4 py-3 transition-colors hover:bg-secondary/30 cursor-pointer",
-                          !item.read ? "bg-primary/5" : "",
+                          "flex gap-3 border-b border-gray-200 px-4 py-3 transition-colors hover:bg-gray-50 cursor-pointer dark:border-gray-700 dark:hover:bg-gray-800",
+                          !item.read ? "bg-emerald-50 dark:bg-emerald-900/20" : "",
                         ].join(" ")}
                       >
                         <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full ${
@@ -124,17 +124,17 @@ export default function NotificationDropdown() {
                         </span>
                         <div className="min-w-0 flex-1">
                           <div className="flex items-start justify-between gap-2">
-                            <p className="text-sm font-semibold text-foreground">
+                            <p className="text-sm font-semibold text-gray-900 dark:text-white">
                               {item.title}
                             </p>
                             {!item.read && (
-                              <span className="h-2 w-2 rounded-full bg-primary mt-1.5 shrink-0" />
+                              <span className="h-2 w-2 rounded-full bg-emerald-500 mt-1.5 shrink-0" />
                             )}
                           </div>
-                          <p className="mt-0.5 text-xs text-muted-foreground line-clamp-2">
+                          <p className="mt-0.5 text-xs text-gray-600 line-clamp-2 dark:text-gray-400">
                             {item.message}
                           </p>
-                          <p className="mt-1 text-[10px] text-muted-foreground/60">
+                          <p className="mt-1 text-[10px] text-gray-400/60 dark:text-gray-500/60">
                             {formatTime(item.timestamp)}
                           </p>
                         </div>
@@ -144,11 +144,11 @@ export default function NotificationDropdown() {
                 )}
               </ul>
 
-              <div className="border-t border-border px-4 py-3">
+              <div className="border-t border-gray-200 px-4 py-3 dark:border-gray-700">
                 <Link
                   href="/notifications"
                   onClick={() => setOpen(false)}
-                  className="block text-center text-xs font-semibold text-primary hover:underline"
+                  className="block text-center text-xs font-semibold text-emerald-600 hover:underline dark:text-emerald-400"
                 >
                   View all notifications
                 </Link>
