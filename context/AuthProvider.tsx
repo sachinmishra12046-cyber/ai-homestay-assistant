@@ -45,10 +45,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       throw new Error("Invalid email or password");
     }
 
-    // Force a router refresh to ensure session cookies are propagated
-    // This is critical for production environments where session propagation may be slower
-    router.refresh();
-  }, [router]);
+    // `signIn` has written the session cookie. Re-fetch the client session before
+    // the caller navigates so useAuth() is not left with stale anonymous state.
+    await update();
+  }, [update]);
 
   const signup = useCallback(async (name: string, email: string, password: string) => {
     const res = await fetch("/api/auth/register", {
@@ -73,9 +73,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       throw new Error("Registration successful but login failed");
     }
 
-    // Force a router refresh to ensure session cookies are propagated
-    router.refresh();
-  }, [router]);
+    await update();
+  }, [update]);
 
   const logout = useCallback(async () => {
     await signOut({ redirect: false });

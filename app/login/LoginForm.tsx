@@ -24,6 +24,13 @@ export default function LoginForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
 
+  const getSafeRedirect = () => {
+    const redirect = searchParams.get("redirect");
+    return redirect?.startsWith("/") && !redirect.startsWith("//")
+      ? redirect
+      : "/dashboard";
+  };
+
   const validate = () => {
     const next: typeof errors = {};
     if (!email.trim()) next.email = "Email is required";
@@ -41,11 +48,10 @@ export default function LoginForm() {
     setIsLoading(true);
     try {
       await login(email, password);
-      // Wait a moment for session to be fully propagated
-      await new Promise(resolve => setTimeout(resolve, 100));
-      // Redirect to the page user was trying to access, or dashboard
-      const redirectUrl = searchParams.get('redirect') || '/dashboard';
-      router.push(redirectUrl);
+      // update() in AuthProvider has refreshed useSession. Navigation is still
+      // required: refreshing the current /login route cannot redirect by itself.
+      router.replace(getSafeRedirect());
+      router.refresh();
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Login failed. Please try again.';
       setErrors({ email: errorMessage });
@@ -57,7 +63,7 @@ export default function LoginForm() {
   const handleGoogleSignIn = async () => {
     setIsGoogleLoading(true);
     try {
-      const redirectUrl = searchParams.get('redirect') || '/dashboard';
+      const redirectUrl = getSafeRedirect();
       await signIn("google", { callbackUrl: redirectUrl });
     } catch (error) {
       console.error("Google sign-in error:", error);

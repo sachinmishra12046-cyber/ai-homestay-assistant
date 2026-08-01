@@ -1,12 +1,9 @@
 import type { NextConfig } from "next";
 
-const nextConfig: NextConfig = {
-  // Automatically set NEXTAUTH_URL for Vercel deployments
-  env: {
-    NEXTAUTH_URL: process.env.VERCEL_URL
-      ? `https://${process.env.VERCEL_URL}`
-      : process.env.NEXTAUTH_URL || "http://localhost:3000",
-  },
-};
+// NEXTAUTH_URL must come from Vercel's Production environment configuration.
+// Do not replace it with VERCEL_URL here: that value can be a deployment URL
+// rather than the canonical domain and this `env` block also exposes it to the
+// client build.
+const nextConfig: NextConfig = {};
 
 export default nextConfig;

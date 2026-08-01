@@ -11,10 +11,13 @@ const authPaths = ['/login', '/signup'];
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
-  // Get NextAuth session token
+  // Get NextAuth session token with production-ready configuration
   const token = await getToken({
     req,
     secret: process.env.NEXTAUTH_SECRET,
+    cookieName: process.env.NODE_ENV === 'production'
+      ? '__Secure-next-auth.session-token'
+      : 'next-auth.session-token',
   });
 
   // Check if path requires authentication

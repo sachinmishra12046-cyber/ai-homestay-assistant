@@ -37,7 +37,8 @@ export default function SignupPage() {
     setIsLoading(true);
     try {
       await signup(name, email, password);
-      router.push("/dashboard");
+      router.replace("/dashboard");
+      router.refresh();
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : "Signup failed. Please try again.";
       setErrors({ email: errorMessage });
