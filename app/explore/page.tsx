@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Sparkles, TrendingUp, X, Search, MapPin, Star, Heart, Wifi, Car, Coffee, Mountain, Waves, TreePine, Gem, DollarSign, Leaf, Zap, Shield, Award, Map, ChevronLeft, ChevronRight, Check } from "lucide-react";
 import { useState, useMemo, useCallback, useEffect, useRef } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 
 // Custom debounce hook
 function useDebounce<T>(value: T, delay: number): T {
@@ -461,6 +462,7 @@ function SectionHeader({ title, subtitle, icon: Icon }: { title: string; subtitl
 }
 
 export default function ExplorePage() {
+  const searchParams = useSearchParams();
   const { wishlist, toggleWishlist } = useWishlist();
   const [stays, setStays] = useState<Stay[]>([]);
   const [loading, setLoading] = useState(true);
@@ -482,6 +484,10 @@ export default function ExplorePage() {
   const [chatInput, setChatInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const debouncedSearch = useDebounce(search, 300);
+
+  useEffect(() => {
+    setSearch(searchParams.get("q") ?? "");
+  }, [searchParams]);
 
   // Fetch properties from database
   useEffect(() => {
