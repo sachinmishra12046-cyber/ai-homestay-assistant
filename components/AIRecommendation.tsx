@@ -28,7 +28,8 @@ export default function AIRecommendation() {
       }, 50);
       return () => clearInterval(timer);
     }
-  }, [prompt]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [prompt, fullPlaceholder]);
 
   const handleGenerate = () => {
     // Navigate to AI assistant page with the prompt

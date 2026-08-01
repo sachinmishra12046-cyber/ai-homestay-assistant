@@ -62,7 +62,7 @@ export default function Footer() {
             <ul className="space-y-3">
               {quickLinks.map((link) => (
                 <li key={link.href}>
-                  <motion.div whileHover={{ x: 4 }}>
+                  <motion.div whileHover={{ x: 4 }} className="group">
                     <Link
                       href={link.href}
                       className="text-sm text-gray-600 hover:text-[#16a34a] dark:text-gray-400 dark:hover:text-emerald-400 transition-colors inline-flex items-center gap-1"
@@ -84,7 +84,7 @@ export default function Footer() {
             <ul className="space-y-3">
               {legalLinks.map((link) => (
                 <li key={link.href}>
-                  <motion.div whileHover={{ x: 4 }}>
+                  <motion.div whileHover={{ x: 4 }} className="group">
                     <Link
                       href={link.href}
                       className="text-sm text-gray-600 hover:text-[#16a34a] dark:text-gray-400 dark:hover:text-emerald-400 transition-colors inline-flex items-center gap-1"

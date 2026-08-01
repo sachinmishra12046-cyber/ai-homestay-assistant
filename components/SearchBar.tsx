@@ -37,7 +37,7 @@ export default function SearchBar() {
               >
                 Destination
               </label>
-              <div className="relative">
+              <div className="relative group">
                 <MapPin className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400 transition-colors group-focus-within:text-[#16a34a]" aria-hidden="true" />
                 <input
                   id="destination"
@@ -45,7 +45,7 @@ export default function SearchBar() {
                   value={destination}
                   onChange={(e) => setDestination(e.target.value)}
                   placeholder="Where are you going?"
-                  className="group w-full rounded-xl border border-gray-200 bg-white/50 py-3 pl-10 pr-3 text-sm text-gray-900 outline-none transition-all placeholder:text-gray-400 focus:border-[#16a34a] focus:bg-white focus:ring-2 focus:ring-[#16a34a]/20 dark:border-gray-700 dark:bg-gray-800/50 dark:text-white dark:placeholder:text-gray-500 dark:focus:bg-gray-800"
+                  className="w-full rounded-xl border border-gray-200 bg-white/50 py-3 pl-10 pr-3 text-sm text-gray-900 outline-none transition-all placeholder:text-gray-400 focus:border-[#16a34a] focus:bg-white focus:ring-2 focus:ring-[#16a34a]/20 dark:border-gray-700 dark:bg-gray-800/50 dark:text-white dark:placeholder:text-gray-500 dark:focus:bg-gray-800"
                 />
               </div>
             </div>
@@ -58,14 +58,14 @@ export default function SearchBar() {
               >
                 Check-in
               </label>
-              <div className="relative">
+              <div className="relative group">
                 <Calendar className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400 transition-colors group-focus-within:text-[#16a34a]" aria-hidden="true" />
                 <input
                   id="check-in"
                   type="date"
                   value={checkIn}
                   onChange={(e) => setCheckIn(e.target.value)}
-                  className="group w-full rounded-xl border border-gray-200 bg-white/50 py-3 pl-10 pr-3 text-sm text-gray-900 outline-none transition-all focus:border-[#16a34a] focus:bg-white focus:ring-2 focus:ring-[#16a34a]/20 dark:border-gray-700 dark:bg-gray-800/50 dark:text-white dark:focus:bg-gray-800"
+                  className="w-full rounded-xl border border-gray-200 bg-white/50 py-3 pl-10 pr-3 text-sm text-gray-900 outline-none transition-all focus:border-[#16a34a] focus:bg-white focus:ring-2 focus:ring-[#16a34a]/20 dark:border-gray-700 dark:bg-gray-800/50 dark:text-white dark:focus:bg-gray-800"
                 />
               </div>
             </div>
@@ -78,7 +78,7 @@ export default function SearchBar() {
               >
                 Check-out
               </label>
-              <div className="relative">
+              <div className="relative group">
                 <Calendar className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400 transition-colors group-focus-within:text-[#16a34a]" aria-hidden="true" />
                 <input
                   id="check-out"
@@ -86,7 +86,7 @@ export default function SearchBar() {
                   value={checkOut}
                   min={checkIn || undefined}
                   onChange={(e) => setCheckOut(e.target.value)}
-                  className="group w-full rounded-xl border border-gray-200 bg-white/50 py-3 pl-10 pr-3 text-sm text-gray-900 outline-none transition-all focus:border-[#16a34a] focus:bg-white focus:ring-2 focus:ring-[#16a34a]/20 dark:border-gray-700 dark:bg-gray-800/50 dark:text-white dark:focus:bg-gray-800"
+                  className="w-full rounded-xl border border-gray-200 bg-white/50 py-3 pl-10 pr-3 text-sm text-gray-900 outline-none transition-all focus:border-[#16a34a] focus:bg-white focus:ring-2 focus:ring-[#16a34a]/20 dark:border-gray-700 dark:bg-gray-800/50 dark:text-white dark:focus:bg-gray-800"
                 />
               </div>
             </div>
@@ -99,13 +99,13 @@ export default function SearchBar() {
               >
                 Guests
               </label>
-              <div className="relative">
+              <div className="relative group">
                 <Users className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400 transition-colors group-focus-within:text-[#16a34a]" aria-hidden="true" />
                 <select
                   id="guests"
                   value={guests}
                   onChange={(e) => setGuests(e.target.value)}
-                  className="group w-full cursor-pointer appearance-none rounded-xl border border-gray-200 bg-white/50 py-3 pl-10 pr-9 text-sm text-gray-900 outline-none transition-all focus:border-[#16a34a] focus:bg-white focus:ring-2 focus:ring-[#16a34a]/20 dark:border-gray-700 dark:bg-gray-800/50 dark:text-white dark:focus:bg-gray-800"
+                  className="w-full cursor-pointer appearance-none rounded-xl border border-gray-200 bg-white/50 py-3 pl-10 pr-9 text-sm text-gray-900 outline-none transition-all focus:border-[#16a34a] focus:bg-white focus:ring-2 focus:ring-[#16a34a]/20 dark:border-gray-700 dark:bg-gray-800/50 dark:text-white dark:focus:bg-gray-800"
                 >
                   {[1, 2, 3, 4, 5, 6, 7, 8].map((count) => (
                     <option key={count} value={String(count)}>
