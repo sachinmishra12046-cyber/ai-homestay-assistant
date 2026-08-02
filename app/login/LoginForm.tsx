@@ -10,25 +10,33 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { FormEvent, useState } from "react";
+import { FormEvent, useCallback, useEffect, useState } from "react";
 import { useAuth } from "@/context/AuthProvider";
 import { signIn } from "next-auth/react";
 
 export default function LoginForm() {
   const searchParams = useSearchParams();
-  const { login } = useAuth();
+  const { isAuthenticated, isLoading: isAuthLoading, login } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
   const [isLoading, setIsLoading] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
 
-  const getSafeRedirect = () => {
+  const getSafeRedirect = useCallback(() => {
     const redirect = searchParams.get("redirect");
     return redirect?.startsWith("/") && !redirect.startsWith("//")
       ? redirect
       : "/dashboard";
-  };
+  }, [searchParams]);
+
+  useEffect(() => {
+    if (!isAuthLoading && isAuthenticated) {
+      // A document navigation deliberately avoids competing with the
+      // SessionProvider update that just established this state.
+      window.location.replace(getSafeRedirect());
+    }
+  }, [getSafeRedirect, isAuthenticated, isAuthLoading]);
 
   const validate = () => {
     const next: typeof errors = {};
@@ -47,10 +55,9 @@ export default function LoginForm() {
     setIsLoading(true);
     try {
       await login(email, password);
-      // Do not combine router.replace() with router.refresh(): they are
-      // competing App Router transitions. A document navigation guarantees the
-      // Set-Cookie response is used by the protected-route request.
-      window.location.replace(getSafeRedirect());
+      // The authenticated-session effect above owns navigation. Keeping it in
+      // one place prevents a credentials callback and an App Router transition
+      // from racing each other.
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Login failed. Please try again.';
       setErrors({ email: errorMessage });
