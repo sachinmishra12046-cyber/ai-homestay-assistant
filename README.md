@@ -79,7 +79,59 @@ AI Homestay Assistant helps travelers discover unique homestays instead of tradi
 
 ---
 
-# 🛠 Tech Stack
+# � Deployment Documentation
+
+## Live Frontend URL
+https://ai-homestay-assistant-3mei.vercel.app
+
+## Live Backend URL
+https://ai-homestay-assistant-3mei.vercel.app
+
+The backend is implemented using Next.js API Routes and is deployed on the same Vercel application.
+
+---
+
+## Tech Stack
+
+### Frontend
+- Next.js 15
+- React 19
+- TypeScript
+- Tailwind CSS
+
+### Backend
+- Next.js API Routes
+- NextAuth.js
+- Prisma ORM
+
+### Database
+- PostgreSQL (Supabase)
+
+### Authentication
+- NextAuth.js
+- Credentials Authentication
+- Google OAuth
+
+### AI
+- Google Gemini API
+
+### Deployment
+- Vercel
+
+---
+
+## Known Limitations (Free Tier)
+
+The application is deployed on the Vercel Free Tier and uses the Supabase Free Tier for database services. As a result:
+
+- Cold starts or slightly slower response times may occur after periods of inactivity
+- Gemini API usage depends on free-tier quotas and rate limits
+- Google OAuth requires an active internet connection and valid Google credentials
+- Performance may vary depending on free-tier resource availability
+
+---
+
+# �🛠 Tech Stack
 
 ## Frontend
 
@@ -213,8 +265,12 @@ npm run dev
 
 ```
 DATABASE_URL=
+DIRECT_DATABASE_URL=
 
 JWT_SECRET=
+NEXTAUTH_SECRET=
+# Vercel Production: https://your-production-domain (no quotes or path)
+NEXTAUTH_URL=https://your-app.vercel.app
 
 GOOGLE_CLIENT_ID=
 
