@@ -16,4 +16,4 @@ backend/.env
 
 # Build
 dist
-coverage
+coverage*.zip
