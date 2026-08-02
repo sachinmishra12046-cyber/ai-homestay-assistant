@@ -4,6 +4,12 @@ import CredentialsProvider from 'next-auth/providers/credentials';
 import { prisma } from './prisma';
 import { hashPassword, verifyPassword } from './auth';
 
+const nextAuthSecret = process.env.NEXTAUTH_SECRET;
+
+if (!nextAuthSecret) {
+  throw new Error('NEXTAUTH_SECRET must be configured.');
+}
+
 declare module 'next-auth' {
   interface Session {
     user: {
@@ -127,7 +133,7 @@ export const authOptions: NextAuthOptions = {
     strategy: 'jwt',
     maxAge: 7 * 24 * 60 * 60, // 7 days
   },
-  secret: process.env.NEXTAUTH_SECRET || 'your-nextauth-secret-change-in-production',
+  secret: nextAuthSecret,
   cookies: {
     sessionToken: {
       name: process.env.NODE_ENV === 'production'

@@ -41,12 +41,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       redirect: false,
     });
 
-    console.info("[auth-trace] credentials result", {
-      ok: result?.ok,
-      status: result?.status,
-      error: result?.error,
-    });
-
     if (result?.error) {
       throw new Error("Invalid email or password");
     }
