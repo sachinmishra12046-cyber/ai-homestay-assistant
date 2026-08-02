@@ -42,6 +42,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     });
 
     if (result?.error) {
+      console.warn('[auth] Credentials sign-in failed', {
+        code: result.error,
+        status: result.status,
+      });
       throw new Error("Invalid email or password");
     }
 

@@ -56,6 +56,7 @@ export const authOptions: NextAuthOptions = {
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
+          console.warn('[auth] Credentials sign-in denied', { reason: 'missing-credentials' });
           throw new Error('Invalid credentials');
         }
 
@@ -64,11 +65,15 @@ export const authOptions: NextAuthOptions = {
         });
 
         if (!user) {
+          // Keep the client response generic to prevent account enumeration.
+          // The reason is available in Vercel Function logs for diagnosis.
+          console.warn('[auth] Credentials sign-in denied', { reason: 'email-not-found' });
           throw new Error('Invalid credentials');
         }
 
         const isValidPassword = await verifyPassword(credentials.password, user.password);
         if (!isValidPassword) {
+          console.warn('[auth] Credentials sign-in denied', { reason: 'password-mismatch' });
           throw new Error('Invalid credentials');
         }
 
@@ -82,6 +87,17 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
+    async redirect({ url, baseUrl }) {
+      // Never send a user to an arbitrary callback URL. `baseUrl` is resolved
+      // by NextAuth from the request / NEXTAUTH_URL for the current deployment.
+      if (url.startsWith('/')) return `${baseUrl}${url}`;
+
+      try {
+        return new URL(url).origin === new URL(baseUrl).origin ? url : `${baseUrl}/dashboard`;
+      } catch {
+        return `${baseUrl}/dashboard`;
+      }
+    },
     async signIn({ user, account, profile }) {
       if (account?.provider === 'google' && profile?.email) {
         try {
