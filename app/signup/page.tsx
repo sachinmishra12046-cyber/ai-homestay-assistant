@@ -3,13 +3,11 @@
 import AuthLayout from "@/components/auth/AuthLayout";
 import AuthInput from "@/components/auth/AuthInput";
 import { GitFork, Globe, Lock, Mail, User } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
 import { useAuth } from "@/context/AuthProvider";
 import { signIn } from "next-auth/react";
 
 export default function SignupPage() {
-  const router = useRouter();
   const { signup } = useAuth();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -37,8 +35,7 @@ export default function SignupPage() {
     setIsLoading(true);
     try {
       await signup(name, email, password);
-      router.replace("/dashboard");
-      router.refresh();
+      window.location.replace("/dashboard");
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : "Signup failed. Please try again.";
       setErrors({ email: errorMessage });

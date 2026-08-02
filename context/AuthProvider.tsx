@@ -24,7 +24,7 @@ interface AuthContextValue {
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const { data: session, status, update } = useSession();
+  const { data: session, status } = useSession();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
 
@@ -45,10 +45,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       throw new Error("Invalid email or password");
     }
 
-    // `signIn` has written the session cookie. Re-fetch the client session before
-    // the caller navigates so useAuth() is not left with stale anonymous state.
-    await update();
-  }, [update]);
+    // NextAuth's client signIn() already refreshes SessionProvider when
+    // redirect:false is used. The caller owns the subsequent navigation.
+  }, []);
 
   const signup = useCallback(async (name: string, email: string, password: string) => {
     const res = await fetch("/api/auth/register", {
@@ -73,8 +72,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       throw new Error("Registration successful but login failed");
     }
 
-    await update();
-  }, [update]);
+  }, []);
 
   const logout = useCallback(async () => {
     await signOut({ redirect: false });

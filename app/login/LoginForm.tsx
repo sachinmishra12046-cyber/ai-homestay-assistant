@@ -9,13 +9,12 @@ import {
   Mail
 } from "lucide-react";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { FormEvent, useState } from "react";
 import { useAuth } from "@/context/AuthProvider";
 import { signIn } from "next-auth/react";
 
 export default function LoginForm() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const { login } = useAuth();
   const [email, setEmail] = useState("");
@@ -48,10 +47,10 @@ export default function LoginForm() {
     setIsLoading(true);
     try {
       await login(email, password);
-      // update() in AuthProvider has refreshed useSession. Navigation is still
-      // required: refreshing the current /login route cannot redirect by itself.
-      router.replace(getSafeRedirect());
-      router.refresh();
+      // Do not combine router.replace() with router.refresh(): they are
+      // competing App Router transitions. A document navigation guarantees the
+      // Set-Cookie response is used by the protected-route request.
+      window.location.replace(getSafeRedirect());
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Login failed. Please try again.';
       setErrors({ email: errorMessage });
