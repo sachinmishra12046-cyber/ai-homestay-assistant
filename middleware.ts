@@ -20,6 +20,16 @@ export async function middleware(req: NextRequest) {
       : 'next-auth.session-token',
   });
 
+  const rawSessionToken = token
+    ? null
+    : await getToken({
+      req,
+      cookieName: process.env.NODE_ENV === 'production'
+        ? '__Secure-next-auth.session-token'
+        : 'next-auth.session-token',
+      raw: true,
+    });
+
   // Check if path requires authentication
   const isProtectedPath = protectedPaths.some(path => pathname.startsWith(path));
   const isAuthPath = authPaths.some(path => pathname.startsWith(path));
@@ -28,6 +38,10 @@ export async function middleware(req: NextRequest) {
   if (isProtectedPath && !token) {
     const loginUrl = new URL('/login', req.url);
     loginUrl.searchParams.set('redirect', pathname);
+    loginUrl.searchParams.set(
+      'authTrace',
+      rawSessionToken ? 'jwt-decode-failed' : 'session-cookie-missing'
+    );
     return NextResponse.redirect(loginUrl);
   }
 
