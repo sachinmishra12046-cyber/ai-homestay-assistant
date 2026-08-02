@@ -47,6 +47,9 @@ export default function LoginForm() {
     setIsLoading(true);
     try {
       await login(email, password);
+      console.info("[auth-trace] credential sign-in resolved; redirecting", {
+        destination: getSafeRedirect(),
+      });
       // Do not combine router.replace() with router.refresh(): they are
       // competing App Router transitions. A document navigation guarantees the
       // Set-Cookie response is used by the protected-route request.
