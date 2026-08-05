@@ -17,13 +17,6 @@ An AI-powered full-stack web application that connects travelers with local home
 
 **Demo Video:** Coming Soon
 
-## 📸 Screenshots
-
-![Home Page](./docs/home-page.png)
-![Explore Page](./docs/explore-page.png)
-![Property Details](./docs/property-page.png)
-![Dashboard](./docs/dashboard.png)
-
 ## ✨ Features
 
 ### User Authentication
