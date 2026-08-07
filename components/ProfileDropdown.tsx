@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
+import Image from "next/image";
 import {
   Calendar,
   ChevronDown,
@@ -14,10 +15,20 @@ import {
 import { useState } from "react";
 import { useAuth } from "@/context/AuthProvider";
 
+function getInitials(name: string | null | undefined): string {
+  if (!name) return "U";
+  const parts = name.trim().split(" ");
+  if (parts.length === 1) {
+    return parts[0].charAt(0).toUpperCase();
+  }
+  return (parts[0].charAt(0) + parts[parts.length - 1].charAt(0)).toUpperCase();
+}
+
 export default function ProfileDropdown() {
   const router = useRouter();
   const { user, logout } = useAuth();
   const [open, setOpen] = useState(false);
+  const [imageError, setImageError] = useState(false);
 
   const links = [
     { href: "/profile", label: "Profile", icon: User },
@@ -32,6 +43,10 @@ export default function ProfileDropdown() {
     router.push("/login");
   };
 
+  const handleImageError = () => {
+    setImageError(true);
+  };
+
   return (
     <div className="relative">
       <motion.button
@@ -41,8 +56,20 @@ export default function ProfileDropdown() {
         onClick={() => setOpen((prev) => !prev)}
         className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white py-1 pl-1 pr-3 transition-colors hover:border-emerald-200 dark:border-gray-700 dark:bg-gray-900 dark:hover:border-emerald-800"
       >
-        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-emerald-500 to-teal-600 text-sm font-semibold text-white">
-          {user?.avatar || "U"}
+        <div className="relative flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-emerald-500 to-teal-600 text-sm font-semibold text-white overflow-hidden">
+          {user?.avatar && !imageError ? (
+            <Image
+              src={user.avatar}
+              alt={user?.name || "User avatar"}
+              width={32}
+              height={32}
+              className="h-8 w-8 rounded-full object-cover"
+              onError={handleImageError}
+              unoptimized
+            />
+          ) : (
+            <span className="flex items-center justify-center">{getInitials(user?.name)}</span>
+          )}
         </div>
         <span className="hidden text-sm font-medium text-gray-700 dark:text-gray-200 sm:inline">
           {user?.name || "User"}

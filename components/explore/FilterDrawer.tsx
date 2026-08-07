@@ -3,7 +3,7 @@
 import { X } from "lucide-react";
 import { AMENITY_OPTIONS, CATEGORIES } from "./constants";
 import PriceSlider from "./PriceSlider";
-import { DEFAULT_FILTERS, FilterState } from "./types";
+import { FilterState } from "./types";
 
 interface FilterDrawerProps {
   open: boolean;

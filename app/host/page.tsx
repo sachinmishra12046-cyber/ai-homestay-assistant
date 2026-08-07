@@ -14,7 +14,6 @@ import {
   Trash2,
   Eye,
   BarChart3,
-  Users,
   Star,
 } from "lucide-react";
 import Card from "@/components/ui/Card";
@@ -82,7 +81,6 @@ export default function HostDashboard() {
   }, [user?.id]);
 
   const totalEarnings = bookings.reduce((sum, b) => sum + b.totalPrice, 0);
-  const confirmedBookings = bookings.filter((b) => b.status === "CONFIRMED").length;
   const avgRating = properties.length > 0
     ? properties.reduce((sum, p) => sum + p.rating, 0) / properties.length
     : 0;

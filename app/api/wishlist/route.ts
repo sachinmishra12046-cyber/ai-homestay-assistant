@@ -4,7 +4,7 @@ import { withAuth } from '@/lib/apiAuth';
 
 export async function GET(req: NextRequest) {
   // Verify NextAuth session
-  const authResult = await withAuth(req);
+  const authResult = await withAuth();
   if (authResult instanceof NextResponse) return authResult;
 
   const { userId } = authResult;
@@ -39,7 +39,7 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   // Verify NextAuth session
-  const authResult = await withAuth(req);
+  const authResult = await withAuth();
   if (authResult instanceof NextResponse) return authResult;
 
   const { userId } = authResult;
@@ -88,7 +88,7 @@ export async function POST(req: NextRequest) {
 
 export async function DELETE(req: NextRequest) {
   // Verify NextAuth session
-  const authResult = await withAuth(req);
+  const authResult = await withAuth();
   if (authResult instanceof NextResponse) return authResult;
 
   const { userId } = authResult;

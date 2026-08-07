@@ -4,7 +4,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { useWishlist } from "@/context/WishlistProvider";
 import { motion, AnimatePresence } from "framer-motion";
-import { Sparkles, TrendingUp, X, MapPin, Star, Heart, Wifi, Car, Coffee, Mountain, Waves, TreePine, Gem, DollarSign, Leaf, Zap, Shield, Award, Map, ChevronLeft, ChevronRight, Check } from "lucide-react";
+import { Sparkles, TrendingUp, X, MapPin, Star, Heart, Coffee, Mountain, Waves, TreePine, Gem, DollarSign, Leaf, Zap, Shield, Award, Map, ChevronLeft, ChevronRight, Check } from "lucide-react";
 import { useState, useMemo, useCallback, useEffect } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
@@ -85,12 +85,6 @@ const categoryIcons = {
   "River Side": Waves,
   Glamping: Sparkles,
   "Tiny House": Gem,
-};
-
-const amenityIcons = {
-  "WiFi": Wifi,
-  "Parking": Car,
-  "Kitchen": Coffee,
 };
 
 interface Stay {
@@ -1333,7 +1327,6 @@ function ExplorePageInner() {
 }
 
 function ExplorePageContent() {
-  const searchParams = useSearchParams();
   return <ExplorePageInner />;
 }
 

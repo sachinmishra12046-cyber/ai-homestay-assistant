@@ -10,13 +10,11 @@ import {
   Tag,
   Check,
   X,
-  AlertCircle,
   Info,
   AlertTriangle,
 } from "lucide-react";
 import { useState } from "react";
 import { useNotifications } from "@/context/NotificationProvider";
-import Badge from "@/components/ui/Badge";
 
 const notificationIcons = {
   success: Check,

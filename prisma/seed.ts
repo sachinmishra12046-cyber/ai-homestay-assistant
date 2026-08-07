@@ -1,4 +1,5 @@
 import { PrismaClient, UserRole, BookingStatus } from '@prisma/client'
+import bcrypt from 'bcryptjs'
 
 const prisma = new PrismaClient()
 
@@ -14,12 +15,16 @@ async function main() {
 
   console.log('🧹 Cleaned existing data')
 
+  // Hash passwords
+  const adminPasswordHash = await bcrypt.hash('Admin@123', 12);
+  const userPasswordHash = await bcrypt.hash('User@123', 12);
+
   // Create Admin
   const admin = await prisma.user.create({
     data: {
       name: 'Admin User',
       email: 'admin@staynest.com',
-      password: '$2b$10$abcdefghijklmnopqrstuvwxyz1234567890', // hashed password placeholder
+      password: adminPasswordHash,
       phone: '+919876543210',
       avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=admin',
       role: UserRole.ADMIN,
@@ -33,7 +38,7 @@ async function main() {
     {
       name: 'Sachin Mishra',
       email: 'sachin@example.com',
-      password: '$2b$10$abcdefghijklmnopqrstuvwxyz1234567890',
+      password: userPasswordHash,
       phone: '+919876543211',
       avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=sachin',
       role: UserRole.USER,
@@ -41,7 +46,7 @@ async function main() {
     {
       name: 'Priya Sharma',
       email: 'priya@example.com',
-      password: '$2b$10$abcdefghijklmnopqrstuvwxyz1234567890',
+      password: userPasswordHash,
       phone: '+919876543212',
       avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=priya',
       role: UserRole.USER,
@@ -49,7 +54,7 @@ async function main() {
     {
       name: 'Rahul Verma',
       email: 'rahul@example.com',
-      password: '$2b$10$abcdefghijklmnopqrstuvwxyz1234567890',
+      password: userPasswordHash,
       phone: '+919876543213',
       avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=rahul',
       role: UserRole.USER,
@@ -57,7 +62,7 @@ async function main() {
     {
       name: 'Anita Desai',
       email: 'anita@example.com',
-      password: '$2b$10$abcdefghijklmnopqrstuvwxyz1234567890',
+      password: userPasswordHash,
       phone: '+919876543214',
       avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=anita',
       role: UserRole.USER,
@@ -65,7 +70,7 @@ async function main() {
     {
       name: 'Vikram Singh',
       email: 'vikram@example.com',
-      password: '$2b$10$abcdefghijklmnopqrstuvwxyz1234567890',
+      password: userPasswordHash,
       phone: '+919876543215',
       avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=vikram',
       role: UserRole.USER,
@@ -73,7 +78,7 @@ async function main() {
     {
       name: 'Meera Nair',
       email: 'meera@example.com',
-      password: '$2b$10$abcdefghijklmnopqrstuvwxyz1234567890',
+      password: userPasswordHash,
       phone: '+919876543216',
       avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=meera',
       role: UserRole.USER,
@@ -81,7 +86,7 @@ async function main() {
     {
       name: 'Arjun Kapoor',
       email: 'arjun@example.com',
-      password: '$2b$10$abcdefghijklmnopqrstuvwxyz1234567890',
+      password: userPasswordHash,
       phone: '+919876543217',
       avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=arjun',
       role: UserRole.USER,
@@ -89,7 +94,7 @@ async function main() {
     {
       name: 'Kavita Reddy',
       email: 'kavita@example.com',
-      password: '$2b$10$abcdefghijklmnopqrstuvwxyz1234567890',
+      password: userPasswordHash,
       phone: '+919876543218',
       avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=kavita',
       role: UserRole.USER,
@@ -97,7 +102,7 @@ async function main() {
     {
       name: 'Deepak Joshi',
       email: 'deepak@example.com',
-      password: '$2b$10$abcdefghijklmnopqrstuvwxyz1234567890',
+      password: userPasswordHash,
       phone: '+919876543219',
       avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=deepak',
       role: UserRole.USER,
@@ -105,7 +110,7 @@ async function main() {
     {
       name: 'Sneha Patel',
       email: 'sneha@example.com',
-      password: '$2b$10$abcdefghijklmnopqrstuvwxyz1234567890',
+      password: userPasswordHash,
       phone: '+919876543220',
       avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=sneha',
       role: UserRole.USER,

@@ -14,7 +14,7 @@ import {
   MousePointerClick,
   CalendarCheck,
   Plane,
-  X,       
+  X,
   ArrowRight,
   Star,
   MapPin,
@@ -338,7 +338,7 @@ export default function AboutPage() {
             {/* connector line */}
             <div className="hidden md:block absolute top-9 left-[12.5%] right-[12.5%] h-0.5 bg-gradient-to-r from-emerald-200 via-emerald-400 to-emerald-200" />
 
-            {steps.map((s, i) => (
+            {steps.map((s) => (
               <div key={s.title} className="relative flex flex-col items-center text-center px-4 pb-4">
                 {/* step number badge */}
                 <div className="relative z-10 w-[72px] h-[72px] rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-400 flex items-center justify-center text-white shadow-lg shadow-emerald-200 mb-5">

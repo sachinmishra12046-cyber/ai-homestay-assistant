@@ -17,24 +17,29 @@ export const dynamic = 'force-dynamic';
 export async function POST(req: NextRequest) {
   try {
     const request = requestSchema.parse(await req.json());
+    
+    // Search by city OR address (address often contains state names like "Arambol, Goa")
     const properties = await prisma.property.findMany({
       where: {
-        city: { equals: request.destination, mode: 'insensitive' },
         country: { equals: 'India', mode: 'insensitive' },
         pricePerNight: { lte: request.budget },
         guests: { gte: request.guests },
+        OR: [
+          { city: { contains: request.destination, mode: 'insensitive' } },
+          { address: { contains: request.destination, mode: 'insensitive' } },
+        ],
       },
       orderBy: [{ rating: 'desc' }, { pricePerNight: 'asc' }],
-      select: { id: true, title: true, description: true, pricePerNight: true, rating: true, amenities: true },
+      select: { id: true, title: true, description: true, pricePerNight: true, rating: true, amenities: true, city: true, address: true },
     });
 
     const homestays = properties
       .filter((property) => !restrictedTerms.test(`${property.title} ${property.description}`))
       .slice(0, 3);
 
-    if (homestays.length !== 3) {
+    if (homestays.length === 0) {
       return NextResponse.json(
-        { error: `StayNest needs three matching Indian homestays in ${request.destination} within ₹${request.budget}/night for ${request.guests} guest${request.guests === 1 ? '' : 's'}. Try a different budget, guest count, or destination.` },
+        { error: `No matching Indian homestays found in ${request.destination} within ₹${request.budget}/night for ${request.guests} guest${request.guests === 1 ? '' : 's'}. Try a different budget, guest count, or destination.` },
         { status: 404 },
       );
     }
@@ -47,7 +52,7 @@ export async function POST(req: NextRequest) {
         approximatePrice: property.pricePerNight,
         rating: property.rating,
         keyAmenities: property.amenities.slice(0, 5),
-        whyItMatches: `Located in ${request.destination}, accommodates ${request.guests} guest${request.guests === 1 ? '' : 's'}, and is within your ₹${request.budget}/night budget.${request.preferences ? ` It also provides a good base for: ${request.preferences}.` : ''}`,
+        whyItMatches: `Located in ${property.city}, ${property.address}, accommodates ${request.guests} guest${request.guests === 1 ? '' : 's'}, and is within your ₹${request.budget}/night budget.${request.preferences ? ` It also provides a good base for: ${request.preferences}.` : ''}`,
       })),
       travelTips: [
         'Confirm dates and availability with the host before booking.',

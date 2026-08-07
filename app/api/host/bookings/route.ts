@@ -4,7 +4,7 @@ import { withAuth } from '@/lib/apiAuth';
 
 export async function GET(req: NextRequest) {
   // Verify NextAuth session
-  const authResult = await withAuth(req);
+  const authResult = await withAuth();
   if (authResult instanceof NextResponse) return authResult;
 
   const { userId } = authResult;

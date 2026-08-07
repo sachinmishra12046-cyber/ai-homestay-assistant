@@ -14,7 +14,6 @@ import {
   Home,
   LogOut,
   MapPin,
-  Search,
   Settings,
   Sparkles,
   Star,
@@ -464,7 +463,7 @@ export default function DashboardPage() {
                 Recent Activity
               </h2>
               <ol className="relative border-l-2 border-border ml-3 space-y-8">
-                {recentActivity.map(({ title, time, icon: Icon, description }, index) => (
+                {recentActivity.map(({ title, time, icon: Icon, description }) => (
                   <li key={title} className="relative pl-8">
                     <span className="absolute -left-3 flex h-6 w-6 items-center justify-center rounded-full bg-gradient-primary text-white ring-4 ring-background">
                       <Icon className="h-3 w-3" strokeWidth={2.5} />

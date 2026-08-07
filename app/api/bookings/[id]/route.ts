@@ -7,7 +7,7 @@ export async function PATCH(
   { params }: { params: Promise<{ id: string }> }
 ) {
   // Verify NextAuth session
-  const authResult = await withAuth(req);
+  const authResult = await withAuth();
   if (authResult instanceof NextResponse) return authResult;
 
   try {
@@ -42,7 +42,7 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   // Verify NextAuth session
-  const authResult = await withAuth(req);
+  const authResult = await withAuth();
   if (authResult instanceof NextResponse) return authResult;
 
   try {

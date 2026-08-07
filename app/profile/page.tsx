@@ -16,11 +16,6 @@ import {
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
-interface Booking {
-  id: string;
-  status: string;
-}
-
 const recentActivity = [
   { action: "Booked Himalayan Pine Retreat", date: "Apr 12, 2026" },
   { action: "Added Coastal Villa to wishlist", date: "Apr 10, 2026" },

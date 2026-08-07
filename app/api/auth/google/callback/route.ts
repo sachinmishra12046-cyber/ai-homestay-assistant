@@ -1,6 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
-import { hash } from 'bcryptjs';
 
 export async function GET(req: NextRequest) {
   const searchParams = req.nextUrl.searchParams;

@@ -4,7 +4,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { useAuth } from "@/context/AuthProvider";
 import { motion } from "framer-motion";
-import { Calendar, Download, MapPin, Users, X } from "lucide-react";
+import { Calendar, Download, MapPin, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { format } from "date-fns";
 

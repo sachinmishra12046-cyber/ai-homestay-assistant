@@ -10,7 +10,6 @@ import { useAuth } from "@/context/AuthProvider";
 import { useWishlist } from "@/context/WishlistProvider";
 import {
   MapPin,
-  Calendar,
   Users,
   Home,
   Wifi,
@@ -25,8 +24,6 @@ import {
   Share2,
   ChevronLeft,
   Check,
-  Clock,
-  User,
 } from "lucide-react";
 import { format } from "date-fns";
 

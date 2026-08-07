@@ -80,7 +80,7 @@ export default function AIAssistantPage() {
           <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-200 dark:border-gray-700">
             <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-6">Recommendations</h2>
             {loading && <div className="flex flex-col items-center justify-center py-12"><Loader size="lg" label="Finding matching homestays..." /></div>}
-            {!loading && !recommendation && <div className="flex flex-col items-center justify-center py-12 text-center text-gray-500 dark:text-gray-400">Fill in your preferences to receive exactly three matching Indian homestays.</div>}
+            {!loading && !recommendation && <div className="flex flex-col items-center justify-center py-12 text-center text-gray-500 dark:text-gray-400">Fill in your preferences to receive personalized homestay recommendations.</div>}
             {recommendation && <div className="space-y-6">
               {recommendation.recommendations.map((homestay, index) => (
                 <div key={homestay.id} className="bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-900/20 dark:to-teal-900/20 rounded-xl p-5 border border-emerald-200 dark:border-emerald-800">

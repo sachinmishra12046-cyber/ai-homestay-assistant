@@ -1,6 +1,6 @@
 "use client";
 
-import { ButtonHTMLAttributes, ReactNode } from "react";
+import { ReactNode } from "react";
 import { motion, HTMLMotionProps } from "framer-motion";
 
 type ButtonVariant = "primary" | "secondary" | "outline" | "ghost" | "glass";

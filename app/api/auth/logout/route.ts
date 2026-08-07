@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 
-export async function POST(req: NextRequest) {
+export async function POST() {
   const response = NextResponse.json({ message: 'Logged out successfully' });
   // Clear NextAuth session cookies
   response.cookies.delete('next-auth.session-token');

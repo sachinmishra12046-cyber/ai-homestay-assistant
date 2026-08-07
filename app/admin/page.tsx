@@ -14,17 +14,11 @@ import {
   TrendingUp,
   TrendingDown,
   Settings,
-  LogOut,
   Sparkles,
   BarChart3,
   PieChart,
   Activity,
-  Eye,
-  Edit,
-  Trash2,
   MoreVertical,
-  Search,
-  Filter,
   Download,
 } from "lucide-react";
 
@@ -144,7 +138,6 @@ const aiInsights = [
 ];
 
 export default function AdminDashboard() {
-  const [activeTab, setActiveTab] = useState("overview");
   const [selectedPeriod, setSelectedPeriod] = useState("7d");
 
   return (
